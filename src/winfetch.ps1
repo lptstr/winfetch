@@ -113,15 +113,19 @@ $mem_data = Get-Ciminstance Win32_OperatingSystem
 $freemem = $mem_data.FreePhysicalMemory
 [int]$totalmem = ($mem_data.TotalVisibleMemorySize) / 1024
 [int]$usedmem = ($freemem - $totalmem) / 1024
+$memory = "${usedmem}MiB / ${totalmem}MiB"
 
 # ===== DISK USAGE =====
-
+$disk_data = Get-Ciminstance Win32_LogicalDisk -Filter "DeviceID='C:'"
+$freespace = $disk_data.FreeSpace
+$disk_name = $disk_data.VolumeName
+[int]$totalspace = ($disk_data.Size) / 1074000000
+[int]$usedspace = ($freespace - $totalspace) / 1074000000
+$disk = "${usedspace}GiB / ${totalspace}GiB (${disk_name})"
 
 # ===== POWERSHELL VERSION =====
 $pwsh_data = ($PSVersionTable.PSVersion).ToString()
 $pwsh = "PowerShell v${pwsh_data}"
-
-$memory = "${usedmem}MiB / ${totalmem}MiB"
 
 # reset terminal sequences and display a newline
 write-host "${e}[0m`n" -nonewline
@@ -135,6 +139,7 @@ $info.Add(@("Uptime", "$uptime"))
 $info.Add(@("CPU", "$cpu"))
 $info.Add(@("GPU", "$gpu"))
 $info.Add(@("Memory", "$memory"))
+$info.Add(@("Disk", "$disk"))
 $info.Add(@("", ""))
 $info.Add(@("", "$color_bar"))
 
