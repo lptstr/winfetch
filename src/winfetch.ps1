@@ -110,12 +110,12 @@ write-host "${e}[0m" -nonewline
 
 # add system info into an array
 $info = @()
-$info[0]               += @("OS", "$os")
-$info[1]               += @("Host", "$os")
-$info[2]               += @("Uptime", "$os")
-$info[3]               += @("CPU", "$os")
-$info[4]               += @("GPU", "$os")
-$info[5]               += @("Memory", "$os")
+$info                  += @("OS", "$os")
+$info                  += @("Host", "$os")
+$info                  += @("Uptime", "$os")
+$info                  += @("CPU", "$os")
+$info                  += @("GPU", "$os")
+$info                  += @("Memory", "$os")
 
 $counter = 0
 foreach ($item in $info) {
