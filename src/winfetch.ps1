@@ -59,6 +59,8 @@ $uptime               = ""
 $cpu                  = ""
 $gpu                  = ""
 $memory               = ""
+$disk                 = ""
+$pwsh                 = ""
 
 # ===== OS =====
 $os = (($PSVersionTable.OS).ToString()).TrimStart("Microsoft ")
@@ -112,6 +114,13 @@ $freemem = $mem_data.FreePhysicalMemory
 [int]$totalmem = ($mem_data.TotalVisibleMemorySize) / 1024
 [int]$usedmem = ($freemem - $totalmem) / 1024
 
+# ===== DISK USAGE =====
+
+
+# ===== POWERSHELL VERSION =====
+$pwsh_data = ($PSVersionTable.PSVersion).ToString()
+$pwsh = "PowerShell v${pwsh_data}"
+
 $memory = "${usedmem}MiB / ${totalmem}MiB"
 
 # reset terminal sequences and display a newline
@@ -121,6 +130,7 @@ write-host "${e}[0m`n" -nonewline
 $info = New-Object 'System.Collections.Generic.List[string[]]'
 $info.Add(@("OS", "$os"))
 $info.Add(@("Host", "$computer"))
+$info.Add(@("PowerShell", "$pwsh"))
 $info.Add(@("Uptime", "$uptime"))
 $info.Add(@("CPU", "$cpu"))
 $info.Add(@("GPU", "$gpu"))
