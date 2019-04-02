@@ -1,4 +1,5 @@
 #!/usr/bin/env pwsh
+#requires -version 6
 
 # WinFetch - neofetch ported to PowerShell for windows 10 systems.
 #
