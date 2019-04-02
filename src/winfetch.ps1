@@ -26,25 +26,28 @@
 $version = "0.1.0"
 $e = [char]0x1B
 
-$windows_logo = "${e}[1;34m",
-"                    ....,,:;+ccllll",
-"      ...,,+:;  cllllllllllllllllll",
-",cclllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"                                   ",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"llllllllllllll  lllllllllllllllllll",
-"`'ccllllllllll  lllllllllllllllllll",
-"      `' \\*::  :ccllllllllllllllll",
-"                       ````''*::cll",
-"                                 ``"
+[array]$windows_logo = @("${e}[1;34m                    ....,,:;+ccllll${e}[0m",
+"${e}[1;34m      ...,,+:;  cllllllllllllllllll${e}[0m",
+"${e}[1;34m,cclllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34m                                   ${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34m``'ccllllllllll  lllllllllllllllllll${e}[0m",
+"${e}[1;34m      ``' \\*::  :ccllllllllllllllll${e}[0m",
+"${e}[1;34m                       ````````''*::cll${e}[0m",
+"${e}[1;34m                                 ````${e}[0m")
+
+$color_char = "   "
+$color_bar = "${e}[0;40m${color_char}${e}[0;41m${color_char}${e}[0;42m${color_char}${e}[0;43m${color_char}${e}[0;44m${color_char}${e}[0;45m${color_char}${e}[0;46m${color_char}${e}[0;47m${color_char}"
+
 
 # ===== VARIABLES =====
 $os                   = ""
@@ -74,9 +77,14 @@ $computer = "$make $model"
 # ===== UPTIME =====
 $uptime_data = uptime
 $seconds = $uptime_data.TotalSeconds
-$days ="$($seconds / 60 / 60 / 24) days "
-$hours ="$($seconds / 60 / 60 % 24) hours "
-$mins ="$($seconds / 60 % 60) minutes"
+
+[int]$raw_days ="$($seconds / 60 / 60 / 24)"
+[int]$raw_hours ="$($seconds / 60 / 60 % 24)"
+[int]$raw_mins ="$($seconds / 60 % 60)"
+
+$days ="${raw_days} days "
+$hours ="${raw_hours} hours "
+$mins ="${raw_minutes} minutes"
 
 # hide empty fields
 if (($seconds / 60 / 60 / 24) -le 0) { $days = "" }
@@ -100,25 +108,28 @@ $gpu = $gpu_data.Name
 # ===== MEMORY =====
 $mem_data = Get-Ciminstance Win32_OperatingSystem
 $freemem = $mem_data.FreePhysicalMemory
-$totalmem = $mem_data.TotalVisibleMemorySize
-$usedmem = $freemem - $totalmem
+[int]$totalmem = ($mem_data.TotalVisibleMemorySize) / 1024
+[int]$usedmem = ($freemem - $totalmem) / 1024
 
-$memory = "$([int]($usedmem/1024))MiB / $([int]($totalmem/1024))MiB"
+$memory = "${usedmem}MiB / ${totalmem}MiB"
 
-# reset terminal sequences
-write-host "${e}[0m" -nonewline
+# reset terminal sequences and display a newline
+write-host "${e}[0m`n" -nonewline
 
 # add system info into an array
-$info = @()
-$info                  += @("OS", "$os")
-$info                  += @("Host", "$os")
-$info                  += @("Uptime", "$os")
-$info                  += @("CPU", "$os")
-$info                  += @("GPU", "$os")
-$info                  += @("Memory", "$os")
+$info = New-Object 'System.Collections.Generic.List[string[]]'
+$info.Add(@("OS", "$os"))
+$info.Add(@("Host", "$computer"))
+$info.Add(@("Uptime", "$uptime"))
+$info.Add(@("CPU", "$cpu"))
+$info.Add(@("GPU", "$gpu"))
+$info.Add(@("Memory", "$memory"))
+$info.Add(@("", ""))
+$info.Add(@("", "$color_bar"))
 
+# write system information in a loop
 $counter = 0
-foreach ($item in $info) {
+while ($counter -le $info.Count+1) {
     # print line of logo
     if ($counter -le $windows_logo.Count) {
         write-host $windows_logo[$counter] -nonewline
@@ -126,11 +137,36 @@ foreach ($item in $info) {
         write-host "                                   " -nonewline
     }
     
-    # print item title 
-    write-host "$($info[$counter][0])" -nonewline
+    if ($counter -gt 1) {
+        # print item title 
+        write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
     
-    # print item
-    write-host "$($info[$counter][1])`n" -nonewline
+        # print item
+        if ("" -eq $(($info[$counter-2])[0])) {
+            write-host "$(($info[$counter-2])[1])`n" -nonewline
+        } else {
+            write-host ": $(($info[$counter-2])[1])`n" -nonewline
+        }
+    } else {
+        if ($counter -eq 0) {
+            write-host "   ${e}[1;34m${username}${e}[0m@${e}[1;34m${hostname}${e}[0m`n" -nonewline
+        } else {
+            write-host "   " -nonewline
+            for ($i = 0; $i -lt "${username}@${hostname}".length; $i++) {
+                write-host "-" -nonewline
+            }
+            write-host "`n" -nonewline
+        }
+    }
+    $counter++
+}
+
+if ($counter -lt $windows_logo.Count) {
+    $octr = $counter
+    while ($counter -le $windows_logo.Count) {
+        write-host $windows_logo[$counter]
+        $counter++
+    }
 }
 
 # EOF - We're done!
