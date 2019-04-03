@@ -110,11 +110,7 @@ if ($show_uptime) {
     $raw_days = $uptime_data.Days
     $raw_hours = $uptime_data.Hours
     $raw_mins = $uptime_data.Minutes
-    
-    write $raw_days
-    write $raw_hours
-    write $raw_mins
-    
+
     $days ="${raw_days} days "
     $hours ="${raw_hours} hours "
     $mins ="${raw_mins} minutes"
@@ -195,16 +191,18 @@ while ($counter -le $info.Count+1) {
     }
     
     if ($counter -gt 1) {
-        # print item title 
-        write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
-    
-        # print item, only if not empty
+        # print items, only if not empty
         if (($info[$counter-2])[1] -ne "") {
+            # print item title 
+            write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
+    
             if ("" -eq $(($info[$counter-2])[0])) {
                 write-host "$(($info[$counter-2])[1])`n" -nonewline
             } else {
                 write-host ": $(($info[$counter-2])[1])`n" -nonewline
             }
+        } else {
+                ""
         }
     } else {
         # print username and dashes
@@ -221,6 +219,7 @@ while ($counter -le $info.Count+1) {
     $counter++
 }
 
+# print the rest of the logo
 if ($counter -lt $windows_logo.Count) {
     $octr = $counter
     while ($counter -le $windows_logo.Count) {
