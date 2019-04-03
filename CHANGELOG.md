@@ -1,8 +1,7 @@
 # Changelog
-**KEY** 
 - `[+]` = added feature
 - `[-]` = removed feature
 - `[*]` = fixed issue
 
-## \[Unreleased\]
+### \[Unreleased\]
 - `[*]` Fixed issue #1: uptime does not display properly
