@@ -89,6 +89,8 @@ $gpu                  = ""
 $memory               = ""
 $disk                 = ""
 $pwsh                 = ""
+$pkgmngr              = ""
+$pkgs                 = 0
 
 # ===== CONFIGURATION =====
 $show_os              = $true
@@ -99,6 +101,8 @@ $show_gpu             = $true
 $show_memory          = $true
 $show_disk            = $true
 $show_pwsh            = $true
+$show_pkgmngr         = $true
+$show_pkgs            = $true
 
 if (test-path $config) {
     . "$config"
@@ -201,6 +205,54 @@ if ($show_pwsh) {
     $pwsh = "disabled"
 }
 
+# ===== PACKAGE MANAGER =====
+if ($show_pkgmngr) {
+    # detect is Scoop or Choco is installed
+    $scoop = try { Get-Command scoop -ea stop } catch { $null }
+    $choco = try { Get-Command choco -ea stop } catch { $null }
+    
+    if ($scoop) {
+        $pkgmngr += "Scoop "
+    }
+    
+    if ($choco -and $scoop) {
+        $pkgmngr += "& Chocolatey"
+    } elseif ($choco -and (-not $scoop)) {
+        $pkgmngr += "Chocolatey"
+    } else {
+    }
+} else {
+    $pkgmngr = "disabled"
+}
+
+# ===== PACKAGES =====
+if ($show_pkgs) {
+    $chocopkg, $scooppkg = 0
+
+    # detect is Scoop or Choco is installed
+    $scoop = try { Get-Command scoop -ea stop } catch { $null }
+    $choco = try { Get-Command choco -ea stop } catch { $null }
+    
+    # count Chocolatey packages
+    if ($choco) {
+        $chocopkg += (((((clist -l | out-string).Split("`n"))[-2]).Split(" "))[0]) - 1
+    }
+    
+    if ($scoop) {
+        $scooppath = scoop which scoop
+        $scoopdir = ((resolve-path "$(split-path $scooppath)\..\..\..\").Path).ToString()
+        pushd
+        set-location $scoopdir
+        $scooppkg += ((get-childitem -directory).Count) - 1
+        popd
+    }
+    
+    $totalpkgs = $chocopkg + $scooppkg
+    $pkgs = "${totalpkgs} packages installed"
+} else {
+    $pkgs = "disabled"
+}
+
 # reset terminal sequences and display a newline
 write-host "${e}[0m`n" -nonewline
 
@@ -208,6 +260,8 @@ write-host "${e}[0m`n" -nonewline
 $info = New-Object 'System.Collections.Generic.List[string[]]'
 $info.Add(@("OS", "$os"))
 $info.Add(@("Host", "$computer"))
+$info.Add(@("Package Managers", "$pkgmngr"))
+$info.Add(@("Packages", "$pkgs"))
 $info.Add(@("PowerShell", "$pwsh"))
 $info.Add(@("Uptime", "$uptime"))
 $info.Add(@("CPU", "$cpu"))
