@@ -17,8 +17,8 @@ WinFetch curently supports Windows 10; Windows 7 and Windows 8 have not yet been
 
 **WinFetch can be considered to be in beta stage**; while WinFetch does work in the majority of cases, things may break occasionally. Please report all such bugs [here](https://github.com/lptstr/winfetch/issues/new?title=%5BBUG%5D%20WinFetch%20is%20broken!).
 
-### Features
+## Features
 Why you should use WinFetch:
 1. **You don't any other choices.**
-2. **WinFetch is tiny.** The whole thing is ~6.5KB and 170 lines of pure PowerShell, counting comments. Neofetch is about 280KB and 7500 lines of code - almost 50 times bigger!
+2. **WinFetch is tiny.** The whole thing is ~9.5KB and 280 lines of pure PowerShell, counting comments. Compare that to Neofetch, which is about 280KB and 7500 lines of code.
 3. **No need for the WSL** - while you need to install the WSL (Windows Subsystem for Linux) to run Neofetch, all you need to use WinFetch is PowerShell 6 (or later), which you probably already have installed.
