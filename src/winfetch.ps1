@@ -55,7 +55,7 @@ $color_bar = "${e}[0;40m${color_char}${e}[0;41m${color_char}${e}[0;42m${color_ch
 
 $configdir = $env:XDG_CONFIG_HOME, "$env:USERPROFILE\.config" | Select-Object -First 1
 $configfolder = "${configdir}/winfetch/"
-$config = "${configfolder}config"
+$config = "${configfolder}config.ps1"
 
 $defaultconfig = "https://raw.githubusercontent.com/lptstr/winfetch/master/lib/config.ps1"
 
