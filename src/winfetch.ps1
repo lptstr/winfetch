@@ -238,6 +238,7 @@ if ($show_pkgs) {
         $chocopkg += (((((clist -l | out-string).Split("`n"))[-2]).Split(" "))[0]) - 1
     }
     
+    # count Scoop packages
     if ($scoop) {
         $scooppath = scoop which scoop
         $scoopdir = ((resolve-path "$(split-path $scooppath)\..\..\..\").Path).ToString()
