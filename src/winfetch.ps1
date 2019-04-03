@@ -89,15 +89,15 @@ $days ="${raw_days} days "
 $hours ="${raw_hours} hours "
 $mins ="${raw_minutes} minutes"
 
-# hide empty fields
-if (($seconds / 60 / 60 / 24) -le 0) { $days = "" }
-if (($seconds / 60 / 60 % 24) -le 0) { $hours = "" }
-if (($seconds / 60 % 60) -le 0) { $minutes = "" }
-
 # remove plural if needed
 if (($seconds / 60 / 60 / 24) -lt 2) { $days = "$($days.TrimEnd(" days ")) day " }
 if (($seconds / 60 / 60 % 24) -lt 2) { $hours = "$($days.TrimEnd(" hours ")) hour " }
 if (($seconds / 60 % 60) -lt 2) { $hours = "$($days.TrimEnd(" minutes ")) minute " }
+
+# hide empty fields
+if (($seconds / 60 / 60 / 24) -le 0) { $days = "" }
+if (($seconds / 60 / 60 % 24) -le 0) { $hours = "" }
+if (($seconds / 60 % 60) -le 0) { $minutes = "" }
 
 $uptime = "${days}${hours}${minutes}"
 
