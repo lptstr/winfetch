@@ -129,7 +129,8 @@ if ($show_computer) {
 
 # ===== UPTIME =====
 if ($show_uptime) {
-    $uptime_data = uptime
+    $bootTime = Get-CimInstance -ClassName win32_operatingsystem | select -ExpandProperty lastbootuptime
+    $uptime_data = (get-date) - $bootTime
     
     $raw_days = $uptime_data.Days
     $raw_hours = $uptime_data.Hours
