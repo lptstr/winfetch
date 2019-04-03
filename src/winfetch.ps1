@@ -24,6 +24,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+param (
+    [switch]$genconf
+)
+
 $version = "0.1.0"
 $e = [char]0x1B
 
@@ -50,7 +54,28 @@ $color_char = "   "
 $color_bar = "${e}[0;40m${color_char}${e}[0;41m${color_char}${e}[0;42m${color_char}${e}[0;43m${color_char}${e}[0;44m${color_char}${e}[0;45m${color_char}${e}[0;46m${color_char}${e}[0;47m${color_char}"
 
 $configdir = $env:XDG_CONFIG_HOME, "$env:USERPROFILE\.config" | Select-Object -First 1
-$config = "${configdir}/winfetch/config"
+$configfolder = "${configdir}/winfetch/"
+$config = "${configfolder}config"
+
+$defaultconfig = "https://raw.githubusercontent.com/lptstr/winfetch/master/lib/config.ps1"
+
+# ensure configuration directory exists
+if (!(test-path $configfolder)) {
+    mkdir -p $configfolder > $null 
+}
+
+# generate configuration
+if ($genconf) {
+    if (test-path $config) {
+        write-host "error: configuration file already exists!" -f red
+        exit 1
+    } else {
+        write-host "info: downloading default configuration to $config"
+        $wb = new-object net.webclient
+        $wb.DownloadFile($defaultconfig, $config)
+        write-host "info: downloaded file."
+    }
+}
 
 # ===== VARIABLES =====
 $os                   = ""
