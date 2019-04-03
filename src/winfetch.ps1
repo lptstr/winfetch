@@ -220,10 +220,12 @@ $info.Add(@("", "$color_bar"))
 $counter = 0
 while ($counter -le $info.Count+1) {
     # print line of logo
-    if ($counter -le $windows_logo.Count) {
-        write-host $windows_logo[$counter] -nonewline
-    } else {
-        write-host "                                   " -nonewline
+    if (($info[$counter-2])[1] -ne "disabled") {
+        if ($counter -le $windows_logo.Count) {
+            write-host $windows_logo[$counter] -nonewline
+        } else {
+                write-host "                                   " -nonewline
+        }
     }
     
     if ($counter -gt 1) {
