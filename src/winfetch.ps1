@@ -107,6 +107,8 @@ if (test-path $config) {
 # ===== OS =====
 if ($show_os) {
     $os = (($PSVersionTable.OS).ToString()).TrimStart("Microsoft ")
+} else {
+    $os = "disabled"
 }
 
 # ===== HOSTNAME =====
@@ -121,6 +123,8 @@ if ($show_computer) {
     $make = $computer_data.Manufacturer
     $model = $computer_data.Model
     $computer = "$make $model"
+} else {
+    $computer = "disabled"
 }
 
 # ===== UPTIME =====
@@ -146,17 +150,23 @@ if ($show_uptime) {
     if ($raw_mins -eq 0) { $mins = "" }
     
     $uptime = "${days}${hours}${mins}"
+} else {
+    $uptime = "disabled"
 }
 
 # ===== CPU/GPU =====
 if ($show_cpu) {
     $cpu_data = Get-CimInstance -ClassName Win32_Processor
     $cpu = $cpu_data.Name
+} else {
+    $cpu = "disabled"
 }
 
 if ($show_gpu) {
     $gpu_data = Get-CimInstance -ClassName Win32_VideoController
     $gpu = $gpu_data.Name
+} else {
+    $gpu = "disabled"
 }
 
 # ===== MEMORY =====
@@ -166,6 +176,8 @@ if ($show_memory) {
     [int]$totalmem = ($mem_data.TotalVisibleMemorySize) / 1024
     [int]$usedmem = ($freemem - $totalmem) / 1024
     $memory = "${usedmem}MiB / ${totalmem}MiB"
+} else {
+    $memory = "disabled"
 }
 
 # ===== DISK USAGE =====
@@ -176,12 +188,16 @@ if ($show_disk) {
     [int]$totalspace = ($disk_data.Size) / 1074000000
     [int]$usedspace = ($freespace - $totalspace) / 1074000000
     $disk = "${usedspace}GiB / ${totalspace}GiB (${disk_name})"
+} else {
+    $disk = "disabled"
 }
 
 # ===== POWERSHELL VERSION =====
 if ($show_pwsh) {
     $pwsh_data = ($PSVersionTable.PSVersion).ToString()
     $pwsh = "PowerShell v${pwsh_data}"
+} else {
+    $pwsh = "disabled"
 }
 
 # reset terminal sequences and display a newline
@@ -211,8 +227,8 @@ while ($counter -le $info.Count+1) {
     }
     
     if ($counter -gt 1) {
-        # print items, only if not empty
-        if (($info[$counter-2])[1] -ne "") {
+        # print items, only if not empty or disabled
+        if (($info[$counter-2])[1] -ne "" -and ($info[$counter-2])[1] -ne "disabled") {
             # print item title 
             write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
     
@@ -222,7 +238,9 @@ while ($counter -le $info.Count+1) {
                 write-host ": $(($info[$counter-2])[1])`n" -nonewline
             }
         } else {
+            if (($info[$counter-2])[1] -ne "disabled") {
                 ""
+            }
         }
     } else {
         # print username and dashes
