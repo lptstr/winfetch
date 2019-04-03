@@ -92,8 +92,6 @@ $pwsh                 = ""
 
 # ===== CONFIGURATION =====
 $show_os              = $true
-$show_hostname        = $true
-$show_username        = $true
 $show_computer        = $true
 $show_uptime          = $true
 $show_cpu             = $true
@@ -112,14 +110,10 @@ if ($show_os) {
 }
 
 # ===== HOSTNAME =====
-if ($show_hostname) {
-    $hostname = $env:computername
-}
+$hostname = $env:computername
 
 # ===== USERNAME =====
-if ($show_username) {
-    $username = [System.Environment]::UserName
-}
+$username = [System.Environment]::UserName
 
 # ===== COMPUTER =====
 if ($show_computer) {
