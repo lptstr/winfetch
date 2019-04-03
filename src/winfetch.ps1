@@ -49,6 +49,8 @@ $e = [char]0x1B
 $color_char = "   "
 $color_bar = "${e}[0;40m${color_char}${e}[0;41m${color_char}${e}[0;42m${color_char}${e}[0;43m${color_char}${e}[0;44m${color_char}${e}[0;45m${color_char}${e}[0;46m${color_char}${e}[0;47m${color_char}"
 
+$configdir = $env:XDG_CONFIG_HOME, "$env:USERPROFILE\.config" | Select-Object -First 1
+$config = "${configdir}/winfetch/config"
 
 # ===== VARIABLES =====
 $os                   = ""
@@ -62,73 +64,109 @@ $memory               = ""
 $disk                 = ""
 $pwsh                 = ""
 
+# ===== CONFIGURATION =====
+$show_os              = $true
+$show_hostname        = $true
+$show_username        = $true
+$show_computer        = $true
+$show_uptime          = $true
+$show_cpu             = $true
+$show_gpu             = $true
+$show_memory          = $true
+$show_disk            = $true
+$show_pwsh            = $true
+
+if (test-path $config) {
+    . "$config"
+}
+
 # ===== OS =====
-$os = (($PSVersionTable.OS).ToString()).TrimStart("Microsoft ")
+if ($show_os) {
+    $os = (($PSVersionTable.OS).ToString()).TrimStart("Microsoft ")
+}
 
 # ===== HOSTNAME =====
-$hostname = $env:computername
+if ($show_hostname) {
+    $hostname = $env:computername
+}
 
 # ===== USERNAME =====
-$username = [System.Environment]::UserName
+if ($show_username) {
+    $username = [System.Environment]::UserName
+}
 
 # ===== COMPUTER =====
-$computer_data = Get-CimInstance -ClassName Win32_ComputerSystem
-$make = $computer_data.Manufacturer
-$model = $computer_data.Model
-$computer = "$make $model"
+if ($show_computer) {
+    $computer_data = Get-CimInstance -ClassName Win32_ComputerSystem
+    $make = $computer_data.Manufacturer
+    $model = $computer_data.Model
+    $computer = "$make $model"
+}
 
 # ===== UPTIME =====
-$uptime_data = uptime
-
-$raw_days = $uptime_data.Days
-$raw_hours = $uptime_data.Hours
-$raw_mins = $uptime_data.Minutes
-
-write $raw_days
-write $raw_hours
-write $raw_mins
-
-$days ="${raw_days} days "
-$hours ="${raw_hours} hours "
-$mins ="${raw_mins} minutes"
-
-# remove plural if needed
-if ($raw_days -lt 2) { $days ="${raw_days} day " }
-if ($raw_hours -lt 2) { $hours ="${raw_hours} hour " }
-if ($raw_mins -lt 2) { $mins ="${raw_mins} minute" }
-
-# hide empty fields
-if ($raw_days -eq 0) { $days = "" }
-if ($raw_hours -eq 0) { $hours = "" }
-if ($raw_mins -eq 0) { $mins = "" }
-
-$uptime = "${days}${hours}${mins}"
+if ($show_uptime) {
+    $uptime_data = uptime
+    
+    $raw_days = $uptime_data.Days
+    $raw_hours = $uptime_data.Hours
+    $raw_mins = $uptime_data.Minutes
+    
+    write $raw_days
+    write $raw_hours
+    write $raw_mins
+    
+    $days ="${raw_days} days "
+    $hours ="${raw_hours} hours "
+    $mins ="${raw_mins} minutes"
+    
+    # remove plural if needed
+    if ($raw_days -lt 2) { $days ="${raw_days} day " }
+    if ($raw_hours -lt 2) { $hours ="${raw_hours} hour " }
+    if ($raw_mins -lt 2) { $mins ="${raw_mins} minute" }
+    
+    # hide empty fields
+    if ($raw_days -eq 0) { $days = "" }
+    if ($raw_hours -eq 0) { $hours = "" }
+    if ($raw_mins -eq 0) { $mins = "" }
+    
+    $uptime = "${days}${hours}${mins}"
+}
 
 # ===== CPU/GPU =====
-$cpu_data = Get-CimInstance -ClassName Win32_Processor
-$cpu = $cpu_data.Name
+if ($show_cpu) {
+    $cpu_data = Get-CimInstance -ClassName Win32_Processor
+    $cpu = $cpu_data.Name
+}
 
-$gpu_data = Get-CimInstance -ClassName Win32_VideoController
-$gpu = $gpu_data.Name
+if ($show_gpu) {
+    $gpu_data = Get-CimInstance -ClassName Win32_VideoController
+    $gpu = $gpu_data.Name
+}
 
 # ===== MEMORY =====
-$mem_data = Get-Ciminstance Win32_OperatingSystem
-$freemem = $mem_data.FreePhysicalMemory
-[int]$totalmem = ($mem_data.TotalVisibleMemorySize) / 1024
-[int]$usedmem = ($freemem - $totalmem) / 1024
-$memory = "${usedmem}MiB / ${totalmem}MiB"
+if ($show_memory) {
+    $mem_data = Get-Ciminstance Win32_OperatingSystem
+    $freemem = $mem_data.FreePhysicalMemory
+    [int]$totalmem = ($mem_data.TotalVisibleMemorySize) / 1024
+    [int]$usedmem = ($freemem - $totalmem) / 1024
+    $memory = "${usedmem}MiB / ${totalmem}MiB"
+}
 
 # ===== DISK USAGE =====
-$disk_data = Get-Ciminstance Win32_LogicalDisk -Filter "DeviceID='C:'"
-$freespace = $disk_data.FreeSpace
-$disk_name = $disk_data.VolumeName
-[int]$totalspace = ($disk_data.Size) / 1074000000
-[int]$usedspace = ($freespace - $totalspace) / 1074000000
-$disk = "${usedspace}GiB / ${totalspace}GiB (${disk_name})"
+if ($show_disk) {
+    $disk_data = Get-Ciminstance Win32_LogicalDisk -Filter "DeviceID='C:'"
+    $freespace = $disk_data.FreeSpace
+    $disk_name = $disk_data.VolumeName
+    [int]$totalspace = ($disk_data.Size) / 1074000000
+    [int]$usedspace = ($freespace - $totalspace) / 1074000000
+    $disk = "${usedspace}GiB / ${totalspace}GiB (${disk_name})"
+}
 
 # ===== POWERSHELL VERSION =====
-$pwsh_data = ($PSVersionTable.PSVersion).ToString()
-$pwsh = "PowerShell v${pwsh_data}"
+if ($show_pwsh) {
+    $pwsh_data = ($PSVersionTable.PSVersion).ToString()
+    $pwsh = "PowerShell v${pwsh_data}"
+}
 
 # reset terminal sequences and display a newline
 write-host "${e}[0m`n" -nonewline
@@ -160,13 +198,16 @@ while ($counter -le $info.Count+1) {
         # print item title 
         write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
     
-        # print item
-        if ("" -eq $(($info[$counter-2])[0])) {
-            write-host "$(($info[$counter-2])[1])`n" -nonewline
-        } else {
-            write-host ": $(($info[$counter-2])[1])`n" -nonewline
+        # print item, only if not empty
+        if (($info[$counter-2])[1] -ne "") {
+            if ("" -eq $(($info[$counter-2])[0])) {
+                write-host "$(($info[$counter-2])[1])`n" -nonewline
+            } else {
+                write-host ": $(($info[$counter-2])[1])`n" -nonewline
+            }
         }
     } else {
+        # print username and dashes
         if ($counter -eq 0) {
             write-host "   ${e}[1;34m${username}${e}[0m@${e}[1;34m${hostname}${e}[0m`n" -nonewline
         } else {
