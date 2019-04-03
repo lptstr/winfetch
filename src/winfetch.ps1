@@ -79,27 +79,30 @@ $computer = "$make $model"
 
 # ===== UPTIME =====
 $uptime_data = uptime
-$seconds = $uptime_data.TotalSeconds
 
-[int]$raw_days ="$($seconds / 60 / 60 / 24)"
-[int]$raw_hours ="$($seconds / 60 / 60 % 24)"
-[int]$raw_mins ="$($seconds / 60 % 60)"
+$raw_days = $uptime_data.Days
+$raw_hours = $uptime_data.Hours
+$raw_mins = $uptime_data.Minutes
+
+write $raw_days
+write $raw_hours
+write $raw_mins
 
 $days ="${raw_days} days "
 $hours ="${raw_hours} hours "
-$mins ="${raw_minutes} minutes"
+$mins ="${raw_mins} minutes"
 
 # remove plural if needed
-if (($seconds / 60 / 60 / 24) -lt 2) { $days = "$($days.TrimEnd(" days ")) day " }
-if (($seconds / 60 / 60 % 24) -lt 2) { $hours = "$($days.TrimEnd(" hours ")) hour " }
-if (($seconds / 60 % 60) -lt 2) { $hours = "$($days.TrimEnd(" minutes ")) minute " }
+if ($raw_days -lt 2) { $days ="${raw_days} day " }
+if ($raw_hours -lt 2) { $hours ="${raw_hours} hour " }
+if ($raw_mins -lt 2) { $mins ="${raw_mins} minute" }
 
 # hide empty fields
-if (($seconds / 60 / 60 / 24) -le 0) { $days = "" }
-if (($seconds / 60 / 60 % 24) -le 0) { $hours = "" }
-if (($seconds / 60 % 60) -le 0) { $minutes = "" }
+if ($raw_days -eq 0) { $days = "" }
+if ($raw_hours -eq 0) { $hours = "" }
+if ($raw_mins -eq 0) { $mins = "" }
 
-$uptime = "${days}${hours}${minutes}"
+$uptime = "${days}${hours}${mins}"
 
 # ===== CPU/GPU =====
 $cpu_data = Get-CimInstance -ClassName Win32_Processor
