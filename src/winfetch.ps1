@@ -70,10 +70,11 @@ if ($genconf) {
         write-host "error: configuration file already exists!" -f red
         exit 1
     } else {
-        write-host "info: downloading default configuration to $config"
+        write-host "info: downloading default config to $config"
         $wb = new-object net.webclient
         $wb.DownloadFile($defaultconfig, $config)
-        write-host "info: downloaded file."
+        write-host "info: successfully completed download."
+        exit 0
     }
 }
 
