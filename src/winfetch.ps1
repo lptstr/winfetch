@@ -296,10 +296,10 @@ write-host "${e}[0m`n" -nonewline
 $info = New-Object 'System.Collections.Generic.List[string[]]'
 $info.Add(@("OS", "$os"))
 $info.Add(@("Host", "$computer"))
+$info.Add(@("Uptime", "$uptime"))
 $info.Add(@("Package Managers", "$pkgmngr"))
 $info.Add(@("Packages", "$pkgs"))
 $info.Add(@("PowerShell", "$pwsh"))
-$info.Add(@("Uptime", "$uptime"))
 $info.Add(@("Terminal", "$terminal"))
 $info.Add(@("CPU", "$cpu"))
 $info.Add(@("GPU", "$gpu"))
