@@ -10,5 +10,7 @@
 # $show_gpu                 = $false
 # $show_memory              = $false
 # $show_disk                = $false
+# $show_pkgs                = $false
 
 $show_pwsh                = $false
+$show_pkgmngr             = $false
