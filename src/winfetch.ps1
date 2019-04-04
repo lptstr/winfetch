@@ -1,22 +1,3 @@
-function get-terminal {
-$cid = $pid
-$parid = (get-process -id $cid).Parent
-$notterm = new-object collections.generic.list[string]
-$notterm.Add("powershell")
-$notterm.Add("pwsh")
-$notterm.Add("winpty-agent")
-while ($true) {
-if ($notterm.Contains($parid.ProcessName)) {
-$cid = $parid.ID
-$parid = (get-process -id $cid).Parent
-continue
-} else {
-break
-}
-}
-return $parid.ProcessName
-}
-
 #!/usr/bin/env pwsh
 #requires -version 6
 
@@ -103,6 +84,7 @@ $hostname             = ""
 $username             = ""
 $computer             = ""
 $uptime               = ""
+$terminal             = ""
 $cpu                  = ""
 $gpu                  = ""
 $memory               = ""
@@ -115,6 +97,7 @@ $pkgs                 = 0
 $show_os              = $true
 $show_computer        = $true
 $show_uptime          = $true
+$show_terminal        = $true
 $show_cpu             = $true
 $show_gpu             = $true
 $show_memory          = $true
@@ -176,6 +159,39 @@ if ($show_uptime) {
     $uptime = "${days}${hours}${mins}"
 } else {
     $uptime = "disabled"
+}
+
+# ===== TERMINAL =====
+# this section works by getting
+# the parent processes of the 
+# current powershell instance.
+if ($show_terminal) {
+    $cid = $pid
+    $parid = (get-process -id $cid).Parent
+    $notterm = new-object collections.generic.list[string]
+    $notterm.Add("powershell")
+    $notterm.Add("pwsh")
+    $notterm.Add("winpty-agent")
+    while ($true) {
+        if ($notterm.Contains($parid.ProcessName)) {
+            $cid = $parid.ID
+            $parid = (get-process -id $cid).Parent
+            continue
+        } else {
+            break
+        }
+    }
+    $rawterm = $parid.ProcessName
+    switch ($rawterm) {
+        "explorer" { $terminal = "Windows Console" }
+        "alacritty" {
+            $alacritty_ver = ((alacritty --version).Split(" "))[1]
+            $terminal = "Alacritty v${alacritty_ver}"
+        }
+        default { $terminal = $rawterm }
+    }
+} else {
+    $terminal = "disabled"
 }
 
 # ===== CPU/GPU =====
@@ -284,6 +300,7 @@ $info.Add(@("Package Managers", "$pkgmngr"))
 $info.Add(@("Packages", "$pkgs"))
 $info.Add(@("PowerShell", "$pwsh"))
 $info.Add(@("Uptime", "$uptime"))
+$info.Add(@("Terminal", "$terminal"))
 $info.Add(@("CPU", "$cpu"))
 $info.Add(@("GPU", "$gpu"))
 $info.Add(@("Memory", "$memory"))
