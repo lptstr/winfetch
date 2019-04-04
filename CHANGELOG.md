@@ -5,6 +5,8 @@
 - `[!]` = something changed
 
 ### \[Unreleased\]
+
+### \[v1.0.0\]
 - `[*]` Fixed issue #1: uptime does not display properly
 - `[!]` Change configuration file to `config.ps1` from `config`
 - `[+]` Add support for custom configuration
