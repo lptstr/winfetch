@@ -1,3 +1,22 @@
+function get-terminal {
+$cid = $pid
+$parid = (get-process -id $cid).Parent
+$notterm = new-object collections.generic.list[string]
+$notterm.Add("powershell")
+$notterm.Add("pwsh")
+$notterm.Add("winpty-agent")
+while ($true) {
+if ($notterm.Contains($parid.ProcessName)) {
+$cid = $parid.ID
+$parid = (get-process -id $cid).Parent
+continue
+} else {
+break
+}
+}
+return $parid.ProcessName
+}
+
 #!/usr/bin/env pwsh
 #requires -version 6
 
