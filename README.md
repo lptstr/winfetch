@@ -24,6 +24,81 @@ Why you should use WinFetch:
 3. **No need for the WSL.** While you need to install the WSL (Windows Subsystem for Linux) to run Neofetch, all you need to use WinFetch is PowerShell 6 (or later), which you probably already have installed.
 
 ## Installation
-Installation with [Scoop](https://scoop.sh/) coming soon!
+Install WinFetch with [Scoop](https://scoop.sh):
+- Make sure that you have the `extras` bucket installed:
+  ```
+  $ scoop bucket list
+  main
+  java
+  ...
+  extras
+  ```
+- Install the `winfetch` package:
+  ```
+  $ scoop install winfetch
+  ```
+  You should output like this:
+  ```
+  Installing 'winfetch' (1.0.0) [64bit]
+  Loading v1.0.0 from cache
+  Checking hash of v1.0.0 ... ok.
+  Extracting dl.7z ... done.
+  Linking ~\scoop\apps\winfetch\current => ~\scoop\apps\winfetch\1.0.0
+  Creating shim for 'winfetch'.
+  'winfetch' (1.0.0) was installed successfully!
+  ```
+  
+## Usage
+For basic usage, just run `winfetch`:
+```
+$ winfetch
 
-For now, find the latest version from the `releases` section. Download the `.zip` archive, extract, and add `./src/winfetch.ps1` to your `$PATH`.
+                    ....,,:;+ccllll   user@WINMACH
+      ...,,+:;  cllllllllllllllllll   ---------------
+,cclllllllllll  lllllllllllllllllll   OS: Windows 10.0.17134
+llllllllllllll  lllllllllllllllllll   Host: Blah Blaspire 2-12-1-8 BLA-HBLA
+llllllllllllll  lllllllllllllllllll   Package Managers: Scoop & Chocolatey
+llllllllllllll  lllllllllllllllllll   Packages: 127 packages installed
+llllllllllllll  lllllllllllllllllll   Uptime: 7 days 2 hours 22 minutes
+                                      CPU: Intel(R) Core(TM) i3-8130U CPU @ 1000GHz
+llllllllllllll  lllllllllllllllllll   GPU: Intel(R) UHD Graphics 620
+llllllllllllll  lllllllllllllllllll   Memory: 1058MiB / 16261MiB
+llllllllllllll  lllllllllllllllllll   Disk: 426GiB / 1000GiB (Windows)
+llllllllllllll  lllllllllllllllllll
+llllllllllllll  lllllllllllllllllll
+`'ccllllllllll  lllllllllllllllllll
+      `' \\*::  :ccllllllllllllllll
+                       ````''*::cll
+                                 ``
+```
+
+As of version v1.0.0, WinFetch supports custom configuration. Configuration is stored at `$env:XDG_CONFIG_HOME/winfetch/config` (or `~/.config/winfetch/config`).
+
+To generate a default configuration that you can build on, just run:
+```
+winfetch -genconf
+```
+The default configuration looks like this:
+```powershell
+# ===== WINFETCH CONFIGURATION =====
+
+# Add a '#' to any of the lines in 
+# this file to enable their output.
+
+# $show_os                  = $false
+# $show_computer            = $false
+# $show_uptime              = $false
+# $show_cpu                 = $false
+# $show_gpu                 = $false
+# $show_memory              = $false
+# $show_disk                = $false
+# $show_pkgs                = $false
+
+$show_pwsh                = $false
+$show_pkgmngr             = $false
+```
+To disable an information field, just remove the # from that line:
+```powershell
+$show_os = $false			# DISABLED
+# $show_os = $false			# ENABLED!
+```
