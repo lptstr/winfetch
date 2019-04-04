@@ -72,6 +72,7 @@ llllllllllllll  lllllllllllllllllll
                                  ``
 ```
 
+#### Configuration
 As of version v1.0.0, WinFetch supports custom configuration. Configuration is stored at `$env:XDG_CONFIG_HOME/winfetch/config` (or `~/.config/winfetch/config`).
 
 To generate a default configuration that you can build on, just run:
