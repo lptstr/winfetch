@@ -5,6 +5,7 @@
 - `[!]` = something changed
 
 ### \[Unreleased\]
+- `[*]` Fixed issue #2: color bar color not reset in Cmder/ConEmu
 
 ### \[v1.0.0\]
 - `[*]` Fixed issue #1: uptime does not display properly
