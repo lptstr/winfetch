@@ -138,8 +138,8 @@ if (-not $image -and (-not $noimage)) {
         $COLUMNS = 35
         $CURR_ROW = ""
         $CHAR = [text.encoding]::utf8.getstring((226,150,128)) # 226,150,136
-        [string[]]$global:upper = @()
-        [string[]]$global:lower = @()
+        [string[]]$upper = @()
+        [string[]]$lower = @()
 
         [array]$pixels = (magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:- ).Split("`n")
 
@@ -148,8 +148,8 @@ if (-not $image -and (-not $noimage)) {
                           $pixel, 
                           "([0-9])+,([0-9])+:")).Value).TrimEnd(":")
                       ).Split(",")
-            [int]$global:col = $coord[0]
-            [int]$global:row = $coord[1]
+            [int]$col = $coord[0]
+            [int]$row = $coord[1]
             $rgba = ([regex]::match(
                         $pixel, 
                         "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)"
