@@ -3,6 +3,8 @@
 # Add a '#' to any of the lines in 
 # this file to **enable** their output.
 
+# $show_title               = $true
+# $show_dashes              = $true
 # $show_os                  = $false
 # $show_computer            = $false
 # $show_uptime              = $false
