@@ -294,6 +294,10 @@ if ($show_terminal) {
     $terminal = "disabled"
 }
 
+if ($terminal -eq "" -or ($null -eq $terminal)) {
+    $terminal = "unknown"
+}
+
 # ===== CPU/GPU =====
 if ($show_cpu) {
     $cpu_data = Get-CimInstance -ClassName Win32_Processor
