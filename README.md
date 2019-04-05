@@ -8,7 +8,7 @@
 <a href="https://www.codacy.com/app/lptstr/winfetch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lptstr/winfetch&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/cc3ea20a9c4e4ec8a441e84dd9baa241"/></a>
 </p>
 
-<img src="https://lptstr.github.io/lptstr-images/screenshots/projects/winfetch/computant.png" alt="neofetch" align="right" height="240px">
+<img src="https://lptstr.github.io/lptstr-images/screenshots/projects/winfetch/computant.png" alt="winfetch" align="right" height="250px">
 
 WinFetch is a command-line system information utility written in PowerShell 6+ for Windows. WinFetch displays information about your operating system, software and hardware in an way similar to Neofetch and Screenfetch. 
 
