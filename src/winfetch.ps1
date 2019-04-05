@@ -79,6 +79,8 @@ if ($genconf) {
 }
 
 # ===== VARIABLES =====
+$title                = ""
+$dashes               = ""
 $os                   = ""
 $hostname             = ""
 $username             = ""
@@ -94,6 +96,8 @@ $pkgmngr              = ""
 $pkgs                 = 0
 
 # ===== CONFIGURATION =====
+$show_title           = $true
+$show_dashes          = $true
 $show_os              = $true
 $show_computer        = $true
 $show_uptime          = $true
@@ -109,7 +113,7 @@ $show_pkgs            = $true
 if (test-path $config) {
     . "$config"
 }
-
+       
 # ===== OS =====
 if ($show_os) {
     $os = (($PSVersionTable.OS).ToString()).TrimStart("Microsoft ")
@@ -122,6 +126,23 @@ $hostname = $env:computername
 
 # ===== USERNAME =====
 $username = [System.Environment]::UserName
+
+# ===== TITLE =====
+if ($show_title) {
+    $title = "${e}[1;34m${username}${e}[0m@${e}[1;34m${hostname}${e}[0m`n"
+} else {
+    $title = "disabled"
+}
+
+# ===== DASHES =====
+if ($show_dashes) {
+    $dashes = ""
+    for ($i = 0; $i -lt $title.length; $i++) {
+        $dashes += "-"
+    }
+} else {
+    $dashes = "disabled"
+}
 
 # ===== COMPUTER =====
 if ($show_computer) {
@@ -298,6 +319,8 @@ write-host "${e}[0m`n" -nonewline
 
 # add system info into an array
 $info = New-Object 'System.Collections.Generic.List[string[]]'
+$info.Add(@("", "$title"))
+$info.Add(@("", "$dashes"))
 $info.Add(@("OS", "$os"))
 $info.Add(@("Host", "$computer"))
 $info.Add(@("Uptime", "$uptime"))
@@ -315,41 +338,24 @@ $info.Add(@("", "$color_bar"))
 # write system information in a loop
 $counter = 0
 while ($counter -le $info.Count+1) {
-    # print line of logo
+    # print items, only if not empty or disabled
     if (($info[$counter-2])[1] -ne "disabled") {
+        # print line of logo
         if ($counter -le $windows_logo.Count) {
             write-host $windows_logo[$counter] -nonewline
         } else {
                 write-host "                                   " -nonewline
         }
-    }
-    
-    if ($counter -gt 1) {
-        # print items, only if not empty or disabled
-        if (($info[$counter-2])[1] -ne "" -and ($info[$counter-2])[1] -ne "disabled") {
-            # print item title 
-            write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
-    
-            if ("" -eq $(($info[$counter-2])[0])) {
-                write-host "$(($info[$counter-2])[1])`n" -nonewline
-            } else {
-                write-host ": $(($info[$counter-2])[1])`n" -nonewline
-            }
+        # print item title 
+        write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
+        if ("" -eq $(($info[$counter-2])[0])) {
+            write-host "$(($info[$counter-2])[1])`n" -nonewline
         } else {
-            if (($info[$counter-2])[1] -ne "disabled") {
-                ""
-            }
+            write-host ": $(($info[$counter-2])[1])`n" -nonewline
         }
     } else {
-        # print username and dashes
-        if ($counter -eq 0) {
-            write-host "   ${e}[1;34m${username}${e}[0m@${e}[1;34m${hostname}${e}[0m`n" -nonewline
-        } else {
-            write-host "   " -nonewline
-            for ($i = 0; $i -lt "${username}@${hostname}".length; $i++) {
-                write-host "-" -nonewline
-            }
-            write-host "`n" -nonewline
+        if (($info[$counter-2])[1] -ne "disabled") {
+            ""
         }
     }
     $counter++
