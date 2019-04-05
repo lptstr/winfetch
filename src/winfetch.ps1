@@ -24,10 +24,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Summary: Winfetch is a command-line system information utility for Windows written in PowerShell. 
+# Usage: ./winfetch [options]
+# Help: Run winfetch without arguments to view core functionality.
+# 
+# OPTIONS
+#          -genconf   Download a custom configuration. Internet connection needed.
+#     -image [path]   Display a pixelated image instead of the usual logo. Imagemagick required.
+#          -noimage   Do not display any image or logo; display information only.
+#             -help   Display this help message.
+#
+
 param (
     [switch]$genconf,
     [string]$image,
-    [switch]$noimage
+    [switch]$noimage,
+    [switch]$help
 )
 
 $version = "0.1.0"
@@ -68,7 +80,41 @@ if (!(test-path $configfolder)) {
     mkdir -p $configfolder > $null 
 }
 
-# generate configuration
+# ===== DISPLAY HELP =====
+function helptitle($text) {
+    $text | Select-String '(?m)^# Helptitle: ([^\n]*)$' | ForEach-Object { $_.matches[0].groups[1].value }
+}
+
+function usage($text) {
+    $text | Select-String '(?m)^# Usage: ([^\n]*)$' | ForEach-Object { "Usage: " + $_.matches[0].groups[1].value }
+}
+
+function summary($text) {
+    $text | Select-String '(?m)^# Summary: ([^\n]*)$' | ForEach-Object { $_.matches[0].groups[1].value }
+}
+
+function help_msg($text) {
+    $help_lines = $text | Select-String '(?ms)^# Help:(.(?!^[^#]))*' | ForEach-Object { $_.matches[0].value; }
+    $help_lines -replace '(?ms)^#\s?(Help: )?', ''
+}
+
+if ($help) {
+    try {
+        $text = (Get-Content $MyInvocation.PSCommandPath -raw)
+    } catch {
+        $text = (Get-Content $PSCOMMANDPATH -raw)
+    }
+    $helpmsg = helptitle $text
+    $helpmsg += usage $text
+    $helpmsg += "`n"
+    $helpmsg += summary $text
+    $helpmsg += "`n"
+    $helpmsg += help_msg $text
+    $helpmsg
+    exit 0
+}
+
+# ===== GENERATE CONFIGURATION =====
 if ($genconf) {
     if (test-path $config) {
         write-host "error: configuration file already exists!" -f red
@@ -292,10 +338,6 @@ if ($show_terminal) {
     }
 } else {
     $terminal = "disabled"
-}
-
-if ($terminal -eq "" -or ($null -eq $terminal)) {
-    $terminal = "unknown"
 }
 
 # ===== CPU/GPU =====
