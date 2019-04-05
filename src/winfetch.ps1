@@ -31,6 +31,8 @@ param (
 $version = "0.1.0"
 $e = [char]0x1B
 
+$DEG = [char]0x00B0
+
 [array]$windows_logo = @("${e}[1;34m                    ....,,:;+ccllll${e}[0m",
 "${e}[1;34m      ...,,+:;  cllllllllllllllllll${e}[0m",
 "${e}[1;34m,cclllllllllll  lllllllllllllllllll${e}[0m",
@@ -91,6 +93,7 @@ $cpu                  = ""
 $gpu                  = ""
 $memory               = ""
 $disk                 = ""
+$temperature          = ""
 $pwsh                 = ""
 $pkgmngr              = ""
 $pkgs                 = 0
@@ -106,6 +109,7 @@ $show_cpu             = $true
 $show_gpu             = $true
 $show_memory          = $true
 $show_disk            = $true
+$show_temperature     = $true
 $show_pwsh            = $true
 $show_pkgmngr         = $true
 $show_pkgs            = $true
@@ -257,6 +261,19 @@ if ($show_disk) {
     $disk = "disabled"
 }
 
+# ===== TEMPERATURE =====
+if ($show_temperature) {
+    $t = Get-WmiObject MSAcpi_ThermalZoneTemperature -Namespace "root/wmi"
+    foreach ($temp in $t.CurrentTemperature) {
+        $kelvin = $temp / 10
+        $celsius = $kelvin - 273.15
+        $fahrenheit = (9/5) * $celsius + 32
+        $temperature = "${celsius}${DEG}C (${fahrenheit}${DEG}F)"
+    }
+} else {
+    $temperature = "disabled"
+}
+
 # ===== POWERSHELL VERSION =====
 if ($show_pwsh) {
     $pwsh_data = ($PSVersionTable.PSVersion).ToString()
@@ -332,6 +349,7 @@ $info.Add(@("CPU", "$cpu"))
 $info.Add(@("GPU", "$gpu"))
 $info.Add(@("Memory", "$memory"))
 $info.Add(@("Disk", "$disk"))
+$info.Add(@("Temperature", "$temperature"))
 $info.Add(@("", ""))
 $info.Add(@("", "$color_bar"))
 
