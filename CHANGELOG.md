@@ -10,6 +10,8 @@
 - `[+]` Added ability to enable/disable title and dashes in config
 - `[!]` Normalized order of information fields (like Neofetch)
 - `[+]` **Added support for custom ASCII image in the terminal!** Yay!
+- `[+]` Added `-help` flag to Winfetch that displays a help message
+- `[!]` Merged package managers/packages installed fields into one field
 
 ### \[v1.0.0\]
 - `[*]` Fixed issue #1: uptime does not display properly
