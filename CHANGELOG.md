@@ -5,7 +5,10 @@
 - `[!]` = something changed
 
 ### \[Unreleased\]
-- `[*]` Fixed issue #2: color bar color not reset in Cmder/ConEmu
+- `[*]` Fixed issue #2: color bar color does not reset in Cmder/ConEmu
+- `[+]` Added field for current terminal emulator
+- `[+]` Added ability to enable/disable title and dashes in config
+- `[!]` Normalized order of information fields (like Neofetch)
 
 ### \[v1.0.0\]
 - `[*]` Fixed issue #1: uptime does not display properly
