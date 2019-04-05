@@ -264,17 +264,21 @@ if ($show_terminal) {
         }
     }
     $rawterm = $parid.ProcessName
-    switch ($rawterm) {
-        "explorer" { $terminal = "Windows Console" }
-        "alacritty" {
-            $alacritty_ver = ((alacritty --version).Split(" "))[1]
-            $terminal = "Alacritty v${alacritty_ver}"
+    try {
+        switch ($rawterm) {
+            "explorer" { $terminal = "Windows Console" }
+            "alacritty" {
+                $alacritty_ver = ((alacritty --version).Split(" "))[1]
+                $terminal = "Alacritty v${alacritty_ver}"
+            }
+            "hyper" {
+                $hyper_ver = ((hyper --version).Split("`n")[0]).Split(" ")[-1]
+                $terminal = "Hyper v${hyper_ver}"
+            }
+            default { $terminal = $rawterm }
         }
-        "hyper" {
-            $hyper_ver = ((hyper --version).Split("`n")[0]).Split(" ")[-1]
-            $terminal = "Hyper v${hyper_ver}"
-        }
-        default { $terminal = $rawterm }
+    } catch {
+        $terminal = $rawterm
     }
 } else {
     $terminal = "disabled"
