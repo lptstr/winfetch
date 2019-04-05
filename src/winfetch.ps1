@@ -26,7 +26,8 @@
 
 param (
     [switch]$genconf,
-    [string]$image
+    [string]$image,
+    [switch]$noimage
 )
 
 $version = "0.1.0"
@@ -34,7 +35,7 @@ $e = [char]0x1B
 
 $DEG = [char]0x00B0
 
-[array]$windows_logo = @("${e}[1;34m                    ....,,:;+ccllll${e}[0m",
+[array]$logo = @("${e}[1;34m                    ....,,:;+ccllll${e}[0m",
 "${e}[1;34m      ...,,+:;  cllllllllllllllllll${e}[0m",
 "${e}[1;34m,cclllllllllll  lllllllllllllllllll${e}[0m",
 "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m",
@@ -120,11 +121,11 @@ if (test-path $config) {
 
 # ===== IMAGE =====
 $img = @()
-if (-not $image) {
-    $img = $windows_logo
-} else {
+if (-not $image -and (-not $noimage)) {
+    $img = $logo
+} elseif (-not $noimage -and ($image)) {
     if (-not (test-path $image)) {
-        $img = $windows_logo
+        $img = $logo
     } else {
         $magick = try { Get-Command magick -ea stop } catch { $null }
         if (-not $magick) {
@@ -143,10 +144,16 @@ if (-not $image) {
         [array]$pixels = (magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:- ).Split("`n")
 
         foreach ($pixel in $pixels) {
-            $coord = ((([regex]::match($pixel, "([0-9])+,([0-9])+:")).Value).TrimEnd(":")).Split(",")
+            $coord = ((([regex]::match(
+                          $pixel, 
+                          "([0-9])+,([0-9])+:")).Value).TrimEnd(":")
+                      ).Split(",")
             [int]$global:col = $coord[0]
             [int]$global:row = $coord[1]
-            $rgba = ([regex]::match($pixel, "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)")).Value
+            $rgba = ([regex]::match(
+                        $pixel, 
+                        "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)"
+                     )).Value
 
             $rgba = (($rgba.TrimStart("(")).TrimEnd(")")).Split(",")
 
@@ -173,6 +180,8 @@ if (-not $image) {
             }
         }
     }
+} else {
+    $img = @()
 }
 
 # ===== OS =====
@@ -407,9 +416,22 @@ while ($counter -lt $info.Count) {
     if (($info[$counter])[1] -ne "disabled") {
         # print line of logo
         if ($counter -le $img.Count) {
-            write-host " $($img[$counter])" -nonewline
+            if (-not $noimage) {
+                write-host " " -nonewline
+            }
+            if ("" -ne $img[$counter]) {
+                write-host "$($img[$counter])" -nonewline
+            }
         } else {
-                write-host "                                    " -nonewline
+            if (-not $noimage) {
+                $imglen = $img[0].length
+                if ($image) {
+                    $imglen = 37
+                }
+                for ($i = 0; $i -le $imglen; $i++) {
+                    write-host " " -nonewline
+                }
+            }
         }
         if ($image) {
             write-host "${e}[37G" -nonewline
@@ -436,5 +458,7 @@ if ($counter -lt $img.Count) {
         $counter++
     }
 }
+
+write-host "" # a newline
 
 # EOF - We're done!
