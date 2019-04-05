@@ -16,6 +16,8 @@ WinFetch curently supports Windows 10; Windows 7 and Windows 8 have not yet been
 
 While WinFetch does work in the majority of cases, things may break occasionally. Please report all such bugs [here](https://github.com/lptstr/winfetch/issues/new).
 
+<img src="https://lptstr.github.io/lptstr-images/screenshots/projects/winfetch/computant-hyper.png" alt="winfetch" align="right" height="250px">
+
 ## Features
 Why you should use WinFetch:
 1. **You don't have any other choices.**
