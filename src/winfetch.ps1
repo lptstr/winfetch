@@ -25,7 +25,8 @@
 # SOFTWARE.
 
 param (
-    [switch]$genconf
+    [switch]$genconf,
+    [string]$image
 )
 
 $version = "0.1.0"
@@ -83,6 +84,7 @@ if ($genconf) {
 # ===== VARIABLES =====
 $title                = ""
 $dashes               = ""
+$img                  = ""
 $os                   = ""
 $hostname             = ""
 $username             = ""
@@ -115,7 +117,64 @@ $show_pkgs            = $true
 if (test-path $config) {
     . "$config"
 }
-       
+
+# ===== IMAGE =====
+$img = @()
+if (-not $image) {
+    $img = $windows_logo
+} else {
+    if (-not (test-path $image)) {
+        $img = $windows_logo
+    } else {
+        $magick = try { Get-Command magick -ea stop } catch { $null }
+        if (-not $magick) {
+            write-host "error: Imagemagick must be installed to print custom images." -f Red
+            write-host "hint: if you have Scoop installed, try `scoop install imagemagick`." -f Yellow
+            exit 1
+        }
+
+        $E = [char]0x1B
+        $COLUMNS = 35
+        $CURR_ROW = ""
+        $CHAR = [text.encoding]::utf8.getstring((226,150,128)) # 226,150,136
+        [string[]]$global:upper = @()
+        [string[]]$global:lower = @()
+
+        [array]$pixels = (magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:- ).Split("`n")
+
+        foreach ($pixel in $pixels) {
+            $coord = ((([regex]::match($pixel, "([0-9])+,([0-9])+:")).Value).TrimEnd(":")).Split(",")
+            [int]$global:col = $coord[0]
+            [int]$global:row = $coord[1]
+            $rgba = ([regex]::match($pixel, "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)")).Value
+
+            $rgba = (($rgba.TrimStart("(")).TrimEnd(")")).Split(",")
+
+            $r = $rgba[0]
+            $g = $rgba[1]
+            $b = $rgba[2]
+
+            if (($row % 2) -eq 0) {
+                $upper += "${r};${g};${b}"
+            } else {
+                $lower += "${r};${g};${b}"
+            }
+
+            if (($row%2) -eq 1 -and ($col -eq ($COLUMNS-1))) {
+                $i = 0
+                while ($i -lt $COLUMNS) {
+                    $CURR_ROW += "${E}[38;2;$($upper[$i]);48;2;$($lower[$i])m${CHAR}"
+                    $i++
+                }
+                $img += "${CURR_ROW}${E}[0m${E}[B${E}[0G"
+                $CURR_ROW = ""
+                $upper = @()
+                $lower = @()
+            }
+        }
+    }
+}
+
 # ===== OS =====
 if ($show_os) {
     $os = (($PSVersionTable.OS).ToString()).TrimStart("Microsoft ")
@@ -131,15 +190,15 @@ $username = [System.Environment]::UserName
 
 # ===== TITLE =====
 if ($show_title) {
-    $title = "${e}[1;34m${username}${e}[0m@${e}[1;34m${hostname}${e}[0m`n"
+    $title = "${e}[1;34m${username}${e}[0m@${e}[1;34m${hostname}${e}[0m"
 } else {
     $title = "disabled"
 }
 
 # ===== DASHES =====
 if ($show_dashes) {
-    $dashes = ""
-    for ($i = 0; $i -lt $title.length; $i++) {
+    $shorttitle = "${username}@${hostname}"
+    for ($i = 0; $i -lt $shorttitle.length; $i++) {
         $dashes += "-"
     }
 } else {
@@ -339,24 +398,27 @@ $info.Add(@("", "$color_bar"))
 
 # write system information in a loop
 $counter = 0
-while ($counter -le $info.Count+1) {
+while ($counter -lt $info.Count) {
     # print items, only if not empty or disabled
-    if (($info[$counter-2])[1] -ne "disabled") {
+    if (($info[$counter])[1] -ne "disabled") {
         # print line of logo
-        if ($counter -le $windows_logo.Count) {
-            write-host $windows_logo[$counter] -nonewline
+        if ($counter -le $img.Count) {
+            write-host " $($img[$counter])" -nonewline
         } else {
-                write-host "                                   " -nonewline
+                write-host "                                    " -nonewline
+        }
+        if ($image) {
+            write-host "${e}[37G" -nonewline
         }
         # print item title 
-        write-host "   ${e}[1;34m$(($info[$counter-2])[0])${e}[0m" -nonewline
-        if ("" -eq $(($info[$counter-2])[0])) {
-            write-host "$(($info[$counter-2])[1])`n" -nonewline
+        write-host "   ${e}[1;34m$(($info[$counter])[0])${e}[0m" -nonewline
+        if ("" -eq $(($info[$counter])[0])) {
+            write-host "$(($info[$counter])[1])`n" -nonewline
         } else {
-            write-host ": $(($info[$counter-2])[1])`n" -nonewline
+            write-host ": $(($info[$counter])[1])`n" -nonewline
         }
     } else {
-        if (($info[$counter-2])[1] -ne "disabled") {
+        if (($info[$counter])[1] -ne "disabled") {
             ""
         }
     }
@@ -364,10 +426,9 @@ while ($counter -le $info.Count+1) {
 }
 
 # print the rest of the logo
-if ($counter -lt $windows_logo.Count) {
-    $octr = $counter
-    while ($counter -le $windows_logo.Count) {
-        write-host $windows_logo[$counter]
+if ($counter -lt $img.Count) {
+    while ($counter -le $img.Count) {
+        write-host " $($img[$counter])"
         $counter++
     }
 }
