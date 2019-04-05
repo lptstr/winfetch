@@ -20,7 +20,7 @@ While WinFetch does work in the majority of cases, things may break occasionally
 Why you should use WinFetch:
 1. **You don't have any other choices.**
 2. **WinFetch is tiny.** The whole thing is ~11KB and 320 lines of pure PowerShell, counting comments. Compare that to Neofetch, which is about 280KB and 7,500 lines of code.
-3. **No need for the WSL.** While you need to install the WSL (Windows Subsystem for Linux) to run Neofetch, all you need to use WinFetch is PowerShell 6 (or later), which you probably already have installed.
+3. **No need for the WSL, Cygwin, or MSYS2.** While you need to install the WSL (Windows Subsystem for Linux) to run Neofetch, all you need to use WinFetch is PowerShell 6 (or later), which you probably already have installed.
 
 ## Installation
 Install WinFetch with [Scoop](https://scoop.sh):
