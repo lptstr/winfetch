@@ -168,9 +168,6 @@ $img = @()
 if (-not $image -and (-not $noimage)) {
     $img = $logo
 } elseif (-not $noimage -and ($image)) {
-    if (-not (test-path $image)) {
-        $img = $logo
-    } else {
         $magick = try { Get-Command magick -ea stop } catch { $null }
         if (-not $magick) {
             write-host "error: Imagemagick must be installed to print custom images." -f Red
@@ -185,6 +182,13 @@ if (-not $image -and (-not $noimage)) {
         [string[]]$global:upper = @()
         [string[]]$global:lower = @()
 
+        if ($image -eq "wallpaper") {
+            $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
+        }
+        if (-not (test-path $image)) {
+            write-host "error: specified image or wallpaper does not exist. aborting." -f Red
+            exit 1
+        }
         [array]$pixels = (magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:- ).Split("`n")
 
         foreach ($pixel in $pixels) {
@@ -223,7 +227,6 @@ if (-not $image -and (-not $noimage)) {
                 $lower = @()
             }
         }
-    }
 } else {
     $img = @()
 }
