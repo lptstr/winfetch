@@ -52,7 +52,7 @@ For basic usage, just run `winfetch`:
 ```
 $ winfetch
 
-                    ....,,:;+ccllll   user@WINMACH
+                    ....,,:;+ccllll   billg@MSDOS4
       ...,,+:;  cllllllllllllllllll   ---------------
 ,cclllllllllll  lllllllllllllllllll   OS: Windows 10.0.17134
 llllllllllllll  lllllllllllllllllll   Host: Blah Blaspire 2-12-1-8 BLA-HBLA
