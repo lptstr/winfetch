@@ -168,65 +168,60 @@ $img = @()
 if (-not $image -and (-not $noimage)) {
     $img = $logo
 } elseif (-not $noimage -and ($image)) {
-        $magick = try { Get-Command magick -ea stop } catch { $null }
-        if (-not $magick) {
-            write-host "error: Imagemagick must be installed to print custom images." -f Red
-            write-host "hint: if you have Scoop installed, try `scoop install imagemagick`." -f Yellow
-            exit 1
+    $magick = try { Get-Command magick -ea stop } catch { $null }
+    if (-not $magick) {
+        write-host "error: Imagemagick must be installed to print custom images." -f Red
+        write-host "hint: if you have Scoop installed, try `scoop install imagemagick`." -f Yellow
+        exit 1
+    }
+
+    $E = [char]0x1B
+    $COLUMNS = 35
+    $CURR_ROW = ""
+    $CHAR = [text.encoding]::utf8.getstring((226,150,128)) # 226,150,136
+    [string[]]$global:upper = @()
+    [string[]]$global:lower = @()
+    if ($image -eq "wallpaper") {
+        $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
+    }
+    if (-not (test-path $image)) {
+        write-host "error: specified image or wallpaper does not exist. aborting." -f Red
+        exit 1
+    }
+    [array]$pixels = (magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:- ).Split("`n")
+    foreach ($pixel in $pixels) {
+        $coord = ((([regex]::match(
+                      $pixel, 
+                      "([0-9])+,([0-9])+:")).Value).TrimEnd(":")
+                  ).Split(",")
+        [int]$global:col = $coord[0]
+        [int]$global:row = $coord[1]
+        $rgba = ([regex]::match(
+                    $pixel, 
+                    "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)"
+                 )).Value
+
+        $rgba = (($rgba.TrimStart("(")).TrimEnd(")")).Split(",")
+        $r = $rgba[0]
+        $g = $rgba[1]
+        $b = $rgba[2]
+        if (($row % 2) -eq 0) {
+            $upper += "${r};${g};${b}"
+        } else {
+            $lower += "${r};${g};${b}"
         }
-
-        $E = [char]0x1B
-        $COLUMNS = 35
-        $CURR_ROW = ""
-        $CHAR = [text.encoding]::utf8.getstring((226,150,128)) # 226,150,136
-        [string[]]$global:upper = @()
-        [string[]]$global:lower = @()
-
-        if ($image -eq "wallpaper") {
-            $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
-        }
-        if (-not (test-path $image)) {
-            write-host "error: specified image or wallpaper does not exist. aborting." -f Red
-            exit 1
-        }
-        [array]$pixels = (magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:- ).Split("`n")
-
-        foreach ($pixel in $pixels) {
-            $coord = ((([regex]::match(
-                          $pixel, 
-                          "([0-9])+,([0-9])+:")).Value).TrimEnd(":")
-                      ).Split(",")
-            [int]$global:col = $coord[0]
-            [int]$global:row = $coord[1]
-            $rgba = ([regex]::match(
-                        $pixel, 
-                        "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)"
-                     )).Value
-
-            $rgba = (($rgba.TrimStart("(")).TrimEnd(")")).Split(",")
-
-            $r = $rgba[0]
-            $g = $rgba[1]
-            $b = $rgba[2]
-
-            if (($row % 2) -eq 0) {
-                $upper += "${r};${g};${b}"
-            } else {
-                $lower += "${r};${g};${b}"
+        if (($row%2) -eq 1 -and ($col -eq ($COLUMNS-1))) {
+            $i = 0
+            while ($i -lt $COLUMNS) {
+                $CURR_ROW += "${E}[38;2;$($upper[$i]);48;2;$($lower[$i])m${CHAR}"
+                $i++
             }
-
-            if (($row%2) -eq 1 -and ($col -eq ($COLUMNS-1))) {
-                $i = 0
-                while ($i -lt $COLUMNS) {
-                    $CURR_ROW += "${E}[38;2;$($upper[$i]);48;2;$($lower[$i])m${CHAR}"
-                    $i++
-                }
-                $img += "${CURR_ROW}${E}[0m${E}[B${E}[0G"
-                $CURR_ROW = ""
-                $upper = @()
-                $lower = @()
-            }
+            $img += "${CURR_ROW}${E}[0m${E}[B${E}[0G"
+            $CURR_ROW = ""
+            $upper = @()
+            $lower = @()
         }
+    }
 } else {
     $img = @()
 }
