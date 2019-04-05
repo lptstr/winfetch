@@ -10,9 +10,9 @@
 
 <img src="https://lptstr.github.io/lptstr-images/screenshots/projects/winfetch/computant.png" alt="winfetch" align="right" height="230px" width="350">
 
-WinFetch is a command-line system information utility written in PowerShell 6+ for Windows. WinFetch displays information about your operating system, software and hardware in an way similar to Neofetch and Screenfetch. 
+Winfetch is a command-line system information utility written in PowerShell 6 for Windows. Winfetch displays information about your operating system, software and hardware in an way similar to Neofetch and Screenfetch. 
 
-WinFetch curently supports Windows 10; Windows 7 and Windows 8 have not yet been tested. **It is highly recommended to use WinFetch with PowerShell 6+**; errors may appear if any other version is used.
+WinFetch curently supports Windows 10; Windows 7 and Windows 8 have not yet been tested. **It is highly recommended to use WinFetch with PowerShell Core**; errors may appear if any other version is used.
 
 While WinFetch does work in the majority of cases, things may break occasionally. Please report all such bugs [here](https://github.com/lptstr/winfetch/issues/new).
 
