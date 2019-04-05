@@ -263,6 +263,7 @@ if ($show_terminal) {
     $notterm.Add("powershell")
     $notterm.Add("pwsh")
     $notterm.Add("winpty-agent")
+    $notterm.Add("cmd")
     while ($true) {
         if ($notterm.Contains($parid.ProcessName)) {
             $cid = $parid.ID
