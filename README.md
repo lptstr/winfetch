@@ -57,12 +57,12 @@ $ winfetch
 ,cclllllllllll  lllllllllllllllllll   OS: Windows 10.0.17134
 llllllllllllll  lllllllllllllllllll   Host: Blah Blaspire 2-12-1-8 BLA-HBLA
 llllllllllllll  lllllllllllllllllll   Package Managers: Scoop & Chocolatey
-llllllllllllll  lllllllllllllllllll   Packages: 127 packages installed
-llllllllllllll  lllllllllllllllllll   Uptime: 7 days 2 hours 22 minutes
-                                      CPU: Intel(R) Core(TM) i3-8130U CPU @ 1000GHz
+llllllllllllll  lllllllllllllllllll   Packages: 512 pkgs of bloat installed
+llllllllllllll  lllllllllllllllllll   Uptime: 30 days 7 hours 2 minutes
+                                      CPU: Intel(R) Core(TM) i2-8130U CPU @ 2048GHz
 llllllllllllll  lllllllllllllllllll   GPU: Intel(R) UHD Graphics 620
-llllllllllllll  lllllllllllllllllll   Memory: 1058MiB / 16261MiB
-llllllllllllll  lllllllllllllllllll   Disk: 426GiB / 1000GiB (Windows)
+llllllllllllll  lllllllllllllllllll   Memory: 1024KiB / 16384KiB
+llllllllllllll  lllllllllllllllllll   Disk: 128MiB / 1024MiB (Windows)
 llllllllllllll  lllllllllllllllllll
 llllllllllllll  lllllllllllllllllll
 `'ccllllllllll  lllllllllllllllllll
@@ -70,6 +70,7 @@ llllllllllllll  lllllllllllllllllll
                        ````''*::cll
                                  ``
 ```
+###### DISCLAIMER: the true output of Winfetch looks nothing like the above.
 
 #### Configuration
 As of version v1.0.0, WinFetch supports custom configuration. Configuration is stored at `$env:XDG_CONFIG_HOME/winfetch/config` (or `~/.config/winfetch/config`).
