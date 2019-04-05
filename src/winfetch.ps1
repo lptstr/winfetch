@@ -143,8 +143,7 @@ $gpu                  = ""
 $memory               = ""
 $disk                 = ""
 $pwsh                 = ""
-$pkgmngr              = ""
-$pkgs                 = 0
+$pkgs                 = ""
 
 # ===== CONFIGURATION =====
 $show_title           = $true
@@ -158,7 +157,6 @@ $show_gpu             = $true
 $show_memory          = $true
 $show_disk            = $true
 $show_pwsh            = $true
-$show_pkgmngr         = $true
 $show_pkgs            = $true
 
 if (test-path $config) {
@@ -184,8 +182,8 @@ if (-not $image -and (-not $noimage)) {
         $COLUMNS = 35
         $CURR_ROW = ""
         $CHAR = [text.encoding]::utf8.getstring((226,150,128)) # 226,150,136
-        [string[]]$upper = @()
-        [string[]]$lower = @()
+        [string[]]$global:upper = @()
+        [string[]]$global:lower = @()
 
         [array]$pixels = (magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:- ).Split("`n")
 
@@ -194,8 +192,8 @@ if (-not $image -and (-not $noimage)) {
                           $pixel, 
                           "([0-9])+,([0-9])+:")).Value).TrimEnd(":")
                       ).Split(",")
-            [int]$col = $coord[0]
-            [int]$row = $coord[1]
+            [int]$global:col = $coord[0]
+            [int]$global:row = $coord[1]
             $rgba = ([regex]::match(
                         $pixel, 
                         "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)"
@@ -386,26 +384,6 @@ if ($show_pwsh) {
     $pwsh = "disabled"
 }
 
-# ===== PACKAGE MANAGER =====
-if ($show_pkgmngr) {
-    # detect is Scoop or Choco is installed
-    $scoop = try { Get-Command scoop -ea stop } catch { $null }
-    $choco = try { Get-Command choco -ea stop } catch { $null }
-    
-    if ($scoop) {
-        $pkgmngr += "Scoop "
-    }
-    
-    if ($choco -and $scoop) {
-        $pkgmngr += "& Chocolatey"
-    } elseif ($choco -and (-not $scoop)) {
-        $pkgmngr += "Chocolatey"
-    } else {
-    }
-} else {
-    $pkgmngr = "disabled"
-}
-
 # ===== PACKAGES =====
 if ($show_pkgs) {
     $chocopkg, $scooppkg = 0
@@ -429,8 +407,15 @@ if ($show_pkgs) {
         popd
     }
     
-    $totalpkgs = $chocopkg + $scooppkg
-    $pkgs = "${totalpkgs} packages installed"
+    if ($scoop) {
+         $pkgs += "$scooppkg (scoop)"
+    }
+    if ($choco -and $scoop) {
+        $pkgs += ", $chocopkg (choco)"
+    } elseif ($choco -and (-not $scoop)) {
+        $pkgs += "$chocopkg (choco)"
+    } else {
+    }
 } else {
     $pkgs = "disabled"
 }
@@ -445,7 +430,6 @@ $info.Add(@("", "$dashes"))
 $info.Add(@("OS", "$os"))
 $info.Add(@("Host", "$computer"))
 $info.Add(@("Uptime", "$uptime"))
-$info.Add(@("Package Managers", "$pkgmngr"))
 $info.Add(@("Packages", "$pkgs"))
 $info.Add(@("PowerShell", "$pwsh"))
 $info.Add(@("Terminal", "$terminal"))
