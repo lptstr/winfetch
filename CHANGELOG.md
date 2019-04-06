@@ -5,11 +5,14 @@
 - `[!]` = something changed
 
 ### \[Unreleased\]
+
+### \[v1.1.0\]
 - `[*]` Fixed issue #2: color bar color does not reset in Cmder/ConEmu
 - `[+]` Added field for current terminal emulator
 - `[+]` Added ability to enable/disable title and dashes in config
 - `[!]` Normalized order of information fields (like Neofetch)
 - `[+]` **Added support for custom ASCII image in the terminal!** Yay!
+- `[+]` Added -noimage flag to not display any image or logo
 - `[+]` Added `-help` flag to Winfetch that displays a help message
 - `[!]` Merged package managers/packages installed fields into one field
 
