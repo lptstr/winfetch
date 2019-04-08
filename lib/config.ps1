@@ -1,17 +1,20 @@
 # ===== WINFETCH CONFIGURATION =====
 
-# Add a '#' to any of the lines in 
+# Remove the '#' from any of the lines in
 # this file to **enable** their output.
 
-$show_title             = $false
-$show_dashes            = $false
-$show_os                = $false
-$show_computer          = $false
-$show_uptime            = $false
-$show_terminal          = $false
-$show_cpu               = $false
-$show_gpu               = $false
-$show_memory            = $false
-$show_disk              = $false
-$show_pwsh              = $false
-$show_pkgs              = $false
+@(
+    'None'
+#    'Show_Title'
+#    'Show_Dashes'
+#    'Show_OS'
+#    'Show_Computer'
+#    'Show_Uptime'
+#    'Show_Terminal'
+#    'Show_CPU'
+#    'Show_GPU'
+#    'Show_Memory'
+#    'Show_Disk'
+#    'Show_Pwsh'
+#    'Show_Pkgs'
+) -join ','
