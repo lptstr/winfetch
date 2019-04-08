@@ -223,8 +223,10 @@ else {
 # ===== HOSTNAME =====
 $strings.hostname = $Env:COMPUTERNAME
 
+
 # ===== USERNAME =====
 $strings.username = [Environment]::UserName
+
 
 # ===== TITLE =====
 if ($configuration.HasFlag([Configuration]::Show_Title)) {
