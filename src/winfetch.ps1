@@ -156,8 +156,9 @@ $img = if (-not $Image -and -not $NoImage.IsPresent) {
 }
 elseif (-not $NoImage.IsPresent -and $Image) {
     if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
-        Write-Warning 'if you have Scoop installed, try `scoop install imagemagick`.'
-        throw 'Imagemagick must be installed to print custom images.'
+        write-host 'error: Imagemagick must be installed to print custom images.' -f red
+        write-host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f red
+        exit 1
     }
 
     $COLUMNS = 35
@@ -211,7 +212,7 @@ $strings.os = if ($configuration.HasFlag([Configuration]::Show_OS)) {
         [Environment]::OSVersion.ToString().TrimStart('Microsoft ')
     }
     else {
-        $PSVersionTable.OS
+        ($PSVersionTable.OS).TrimStart('Microsoft ')
     }
 }
 else {
@@ -222,10 +223,8 @@ else {
 # ===== HOSTNAME =====
 $strings.hostname = $Env:COMPUTERNAME
 
-
 # ===== USERNAME =====
 $strings.username = [Environment]::UserName
-
 
 # ===== TITLE =====
 if ($configuration.HasFlag([Configuration]::Show_Title)) {
