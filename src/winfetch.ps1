@@ -24,17 +24,25 @@
 
 <#
 .SYNOPSIS
-    WinFetch - neofetch ported to PowerShell for windows 10 systems.
+    Winfetch - neofetch ported to PowerShell for windows 10 systems.
 .DESCRIPTION
     Winfetch is a command-line system information utility for Windows written in PowerShell.
-.PARAMETER Image
+.PARAMETER image
     Display a pixelated image instead of the usual logo. Imagemagick required.
-.PARAMETER GenerationConfiguration
+.PARAMETER genconf
     Download a custom configuration. Internet connection needed.
-.PARAMETER NoImage
+.PARAMETER noimage
     Do not display any image or logo; display information only.
 .EXAMPLE
-    PS C:\> ./winfetch.ps1
+    PS C:\>  ./winfetch.ps1
+.EXAMPLE
+    PS C:\>  ./winfetch.ps1 -image C:/path/to/image.jpg
+.EXAMPLE
+    PS C:\>  ./winfetch.ps1 -image wallpaper
+.EXAMPLE
+    PS C:\>  ./winfetch.ps1 -noimage
+.EXAMPLE
+    PS C:\>  ./winfetch.ps1 -genconf 
 .INPUTS
     System.String
 .OUTPUTS
@@ -46,14 +54,9 @@
 
 [CmdletBinding()]
 param(
-    [string]
-    $Image,
-
-    [switch]
-    $GenerateConfiguration,
-
-    [switch]
-    $NoImage
+    [string]$image,
+    [switch]$genconf,
+    [switch]$noimage
 )
 
 $e = [char]0x1B
@@ -74,7 +77,7 @@ if (-not (Test-Path -Path $config)) {
 
 
 # ===== GENERATE CONFIGURATION =====
-if ($GenerateConfiguration.IsPresent) {
+if ($genconf.IsPresent) {
     if ((Get-Item -Path $config).Length -gt 0) {
         throw 'Configuration file already exists!'
     }
@@ -132,7 +135,7 @@ else {
 
 
 # ===== IMAGE =====
-$img = if (-not $Image -and -not $NoImage.IsPresent) {
+$img = if (-not $image -and -not $noimage.IsPresent) {
     @(
         "${e}[1;34m                    ....,,:;+ccllll${e}[0m"
         "${e}[1;34m      ...,,+:;  cllllllllllllllllll${e}[0m"
@@ -154,7 +157,7 @@ $img = if (-not $Image -and -not $NoImage.IsPresent) {
         "${e}[1;34m                                 ````${e}[0m"
     )
 }
-elseif (-not $NoImage.IsPresent -and $Image) {
+elseif (-not $noimage.IsPresent -and $image) {
     if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
         write-host 'error: Imagemagick must be installed to print custom images.' -f red
         write-host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f red
@@ -166,13 +169,13 @@ elseif (-not $NoImage.IsPresent -and $Image) {
     $CHAR = [Text.Encoding]::UTF8.GetString(@(226, 150, 128)) # 226,150,136
     $upper, $lower = @(), @()
 
-    if ($Image -eq 'wallpaper') {
-        $Image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
+    if ($image -eq 'wallpaper') {
+        $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
     }
-    if (-not (Test-Path -Path $Image)) {
+    if (-not (Test-Path -Path $image)) {
         throw 'Specified image or wallpaper does not exist.'
     }
-    $pixels = @((magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $Image txt:-).Split("`n"))
+    $pixels = @((magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:-).Split("`n"))
     foreach ($pixel in $pixels) {
         $coord = [regex]::Match($pixel, "([0-9])+,([0-9])+:").Value.TrimEnd(":") -split ','
         $col, $row = $coord[0, 1]
@@ -407,7 +410,7 @@ while ($counter -lt $info.Count) {
     if ($info[$counter][1] -ne 'disabled') {
         # print line of logo
         if ($counter -le $img.Count) {
-            if (-not $NoImage.IsPresent) {
+            if (-not $noimage.IsPresent) {
                 Write-Host ' ' -NoNewline
             }
             if ('' -ne $img[$counter]) {
@@ -415,9 +418,9 @@ while ($counter -lt $info.Count) {
             }
         }
         else {
-            if (-not $NoImage) {
+            if (-not $noimage) {
                 $imglen = $img[0].length
-                if ($Image) {
+                if ($image) {
                     $imglen = 37
                 }
                 for ($i = 0; $i -le $imglen; $i++) {
@@ -425,7 +428,7 @@ while ($counter -lt $info.Count) {
                 }
             }
         }
-        if ($Image) {
+        if ($image) {
             Write-Host "${e}[37G" -NoNewline
         }
         # print item title
@@ -452,3 +455,4 @@ if ($counter -lt $img.Count) {
 '' # a newline
 
 # EOF - We're done!
+
