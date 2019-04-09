@@ -79,7 +79,8 @@ if ($help) {
 # ===== GENERATE CONFIGURATION =====
 if ($genconf.IsPresent) {
     if ((Get-Item -Path $config).Length -gt 0) {
-        throw 'Configuration file already exists!'
+        write-host 'ERROR: configuration file already exists!' -f red
+        exit 1
     }
     "INFO: downloading default config to '$config'."
     Invoke-WebRequest -Uri $defaultconfig -OutFile $config -UseBasicParsing
