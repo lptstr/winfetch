@@ -326,8 +326,9 @@ else {
 # ===== MEMORY =====
 $strings.memory = if ($configuration.HasFlag([Configuration]::Show_Memory)) {
     $m = Get-CimInstance -ClassName Win32_OperatingSystem
-    $total = $m.TotalVisibleMemorySize / 1kb
-    "$(($m.FreePhysicalMemory - $total) / 1kb)MiB / ${total}MiB"
+    $total = [math]::floor(($m.TotalVisibleMemorySize / 1kb))
+    $used = [math]::floor((($m.FreePhysicalMemory - $total) / 1kb))
+    ("{0}MiB / {1}MiB" -f $used,$total)
 }
 else {
     'disabled'
@@ -337,8 +338,9 @@ else {
 # ===== DISK USAGE =====
 $strings.disk = if ($configuration.HasFlag([Configuration]::Show_Disk)) {
     $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DeviceID="C:"'
-    $total = $disk.Size / 1gb
-    "$(($disk.FreeSpace - $total) / 1gb)GiB / ${total}GiB ($($disk.VolumeName))"
+    $total = [math]::floor(($disk.Size / 1gb))
+    $used = [math]::floor((($disk.FreeSpace - $total) / 1gb))
+    ("{0}GiB / {1}GiB ({2})" -f $used,$total,$disk.VolumeName)
 }
 else {
     'disabled'
