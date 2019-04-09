@@ -229,7 +229,7 @@ $strings.username = [Environment]::UserName
 
 
 # ===== TITLE =====
-if ($configuration.HasFlag([Configuration]::Show_Title)) {
+$strings.title = if ($configuration.HasFlag([Configuration]::Show_Title)) {
     "${e}[1;34m{0}${e}[0m@${e}[1;34m{1}${e}[0m" -f $strings['username', 'hostname']
 }
 else {
