@@ -285,11 +285,15 @@ $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) 
         }
         break
     }
-    switch ($parent.ProcessName) {
-        'explorer'  { 'Windows Console' }
-        'alacritty' { "Alacritty v$((alacritty --version).Split(' ')[1])" }
-        'hyper'     { "Hyper v$(((hyper --version).Split("`n")[0]).Split(' ')[-1])" }
-        default     { $PSItem }
+    try {
+        switch ($parent.ProcessName) {
+            'explorer'  { 'Windows Console' }
+            'alacritty' { "Alacritty v$((alacritty --version).Split(' ')[1])" }
+            'hyper'     { "Hyper v$(((hyper --version).Split("`n")[0]).Split(' ')[-1])" }
+            default     { $PSItem }
+        }
+    } catch {
+        $parent.ProcessName
     }
 }
 else {
