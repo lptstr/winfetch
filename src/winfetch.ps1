@@ -357,7 +357,7 @@ else {
 # ===== PACKAGES =====
 $strings.pkgs = if ($configuration.HasFlag([Configuration]::Show_Pkgs)) {
     $chocopkg = if (Get-Command -Name choco -ErrorAction Ignore) {
-        (& clist -l)[-2].Split(' ')[0] - 1
+        (& clist -l)[-1].Split(' ')[0] - 1
     }
 
     $scooppkg = if (Get-Command -Name scoop -ErrorAction Ignore) {
