@@ -17,3 +17,5 @@ This document, stolen from the Neofetch repository, describes the code style req
 - Try to keep lines below `128` characters long.
 - Use lowercase for .NET functions where possible.
     - e.g. `[text.encoding]::utf8.getstring((000,000,000))` instead of `[Text.Encoding]::UTF8.GetString((000,000,000))`.
+
+Also, **please test out your changes** before submitting a PR.
