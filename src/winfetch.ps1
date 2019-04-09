@@ -406,51 +406,31 @@ $info.Add(@("", $colorBar))
 
 # write system information in a loop
 $counter = 0
+$logoctr = 0
 while ($counter -lt $info.Count) {
-        # print line of logo
-        if ($counter -le $img.Count) {
-            if (-not $noimage.IsPresent) {
-                Write-Host ' ' -NoNewline
-            }
-            if ('' -ne $img[$counter]) {
-                Write-Host "$($img[$counter])" -NoNewline
-                if ($info[$counter][1] -eq 'disabled') { '' }
-            }
-        }
-        else {
-            if (-not $noimage) {
-                $imglen = $img[0].length
-                if ($image) {
-                    $imglen = 37
-                }
-                for ($i = 0; $i -le $imglen; $i++) {
-                    Write-Host ' ' -NoNewline
-                }
-            }
-        }
-        if ($image) {
-            Write-Host "${e}[37G" -NoNewline
-        }
-    # print items, only if not empty or disabled
-    if ($info[$counter][1] -ne 'disabled') {
-        # print item title
-        Write-Host "   ${e}[1;34m$(($info[$counter])[0])${e}[0m" -NoNewline
-        if ('' -eq $(($info[$counter])[0])) {
-            Write-Host "$(($info[$counter])[1])`n" -NoNewline
+    $logo_line = $img[$logoctr]
+    $item_title = "   $e[1;34m$($info[$counter][0])$e[0m"
+    $item_content = if (($info[$counter][0]) -eq '') {
+            $($info[$counter][1])
         } else {
-            Write-Host ": $(($info[$counter])[1])`n" -NoNewline
+            ": $($info[$counter][1])"
         }
-    } elseif (($info[$counter])[1] -ne 'disabled') {
-        ''
+
+    if ($item_content -notlike '*disabled') {
+        write-host " ${logo_line}${item_title}${item_content}"
     }
+
     $counter++
+    if ($item_content -notlike '*disabled') {
+        $logoctr++
+    }
 }
 
 # print the rest of the logo
-if ($counter -lt $img.Count) {
-    while ($counter -le $img.Count) {
-        " $($img[$counter])"
-        $counter++
+if ($logoctr -lt $img.Count) {
+    while ($logoctr -le $img.Count) {
+        " $($img[$logoctr])"
+        $logoctr++
     }
 }
 
