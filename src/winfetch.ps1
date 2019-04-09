@@ -407,8 +407,6 @@ $info.Add(@("", $colorBar))
 # write system information in a loop
 $counter = 0
 while ($counter -lt $info.Count) {
-    # print items, only if not empty or disabled
-    if ($info[$counter][1] -ne 'disabled') {
         # print line of logo
         if ($counter -le $img.Count) {
             if (-not $noimage.IsPresent) {
@@ -416,6 +414,7 @@ while ($counter -lt $info.Count) {
             }
             if ('' -ne $img[$counter]) {
                 Write-Host "$($img[$counter])" -NoNewline
+                if ($info[$counter][1] -eq 'disabled') { '' }
             }
         }
         else {
@@ -432,6 +431,8 @@ while ($counter -lt $info.Count) {
         if ($image) {
             Write-Host "${e}[37G" -NoNewline
         }
+    # print items, only if not empty or disabled
+    if ($info[$counter][1] -ne 'disabled') {
         # print item title
         Write-Host "   ${e}[1;34m$(($info[$counter])[0])${e}[0m" -NoNewline
         if ('' -eq $(($info[$counter])[0])) {
