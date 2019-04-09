@@ -410,7 +410,7 @@ $counter = 0
 $logoctr = 0
 while ($counter -lt $info.Count) {
     $logo_line = $img[$logoctr]
-    $item_title = "   $e[1;34m$($info[$counter][0])$e[0m"
+    $item_title = "$e[1;34m$($info[$counter][0])$e[0m"
     $item_content = if (($info[$counter][0]) -eq '') {
             $($info[$counter][1])
         } else {
@@ -418,7 +418,7 @@ while ($counter -lt $info.Count) {
         }
 
     if ($item_content -notlike '*disabled') {
-        write-host " ${logo_line}${item_title}${item_content}"
+        write-host " ${logo_line}$e[40G${item_title}${item_content}"
     }
 
     $counter++
