@@ -33,22 +33,12 @@
     Download a custom configuration. Internet connection needed.
 .PARAMETER noimage
     Do not display any image or logo; display information only.
-.EXAMPLE
-    PS C:\>  ./winfetch.ps1
-.EXAMPLE
-    PS C:\>  ./winfetch.ps1 -image C:/path/to/image.jpg
-.EXAMPLE
-    PS C:\>  ./winfetch.ps1 -image wallpaper
-.EXAMPLE
-    PS C:\>  ./winfetch.ps1 -noimage
-.EXAMPLE
-    PS C:\>  ./winfetch.ps1 -genconf 
 .INPUTS
     System.String
 .OUTPUTS
     System.String[]
 .NOTES
-    Run winfetch without arguments to view core functionality.
+    Run Winfetch without arguments to view core functionality.
 #>
 
 
@@ -56,7 +46,8 @@
 param(
     [string]$image,
     [switch]$genconf,
-    [switch]$noimage
+    [switch]$noimage,
+    [switch]$help
 )
 
 $e = [char]0x1B
@@ -75,6 +66,15 @@ if (-not (Test-Path -Path $config)) {
     [void](New-Item -Path $config -Force)
 }
 
+# ===== DISPLAY HELP =====
+if ($help) {
+    if (Get-Command -Name less -ErrorAction Ignore) {
+        get-help ($MyInvocation.MyCommand.Definition) -full | less
+    } else {
+        get-help ($MyInvocation.MyCommand.Definition) -full
+    }
+    exit 0
+}
 
 # ===== GENERATE CONFIGURATION =====
 if ($genconf.IsPresent) {
