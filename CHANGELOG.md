@@ -5,6 +5,12 @@
 - `[!]` = something changed
 
 ### \[Unreleased\]
+- `[+]` Add support for PowerShell 5
+- `[!]` Rewrite internals, Winfetch is now faster
+- `[+]` Make Winfetch output redirectable
+- `[+]` Add contributing guide
+- `[!]` Add support for new configuration style ([**@TheIncorrigible1**](https://github.com/TheIncorrigible1))
+- `[!]` Cleaned logic and added consistent style ([**@TheIncorrigible1**](https://github.com/TheIncorrigible1))
 
 ### \[v1.1.0\]
 - `[*]` Fixed issue #2: color bar color does not reset in Cmder/ConEmu
