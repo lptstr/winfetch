@@ -173,8 +173,9 @@ elseif (-not $noimage.IsPresent -and $image) {
     if ($image -eq 'wallpaper') {
         $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
     }
-    if (-not (Test-Path -Path $image)) {
-        throw 'Specified image or wallpaper does not exist.'
+    if (-not (test-path -path $image)) {
+        write-host 'Specified image or wallpaper does not exist.' -f red
+        exit 1
     }
     $pixels = @((magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:-).Split("`n"))
     foreach ($pixel in $pixels) {
