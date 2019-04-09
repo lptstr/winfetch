@@ -418,7 +418,7 @@ while ($counter -lt $info.Count) {
         }
 
     if ($item_content -notlike '*disabled') {
-        write-host " ${logo_line}$e[40G${item_title}${item_content}"
+        " ${logo_line}$e[40G${item_title}${item_content}"
     }
 
     $counter++
