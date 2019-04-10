@@ -284,7 +284,7 @@ else {
 $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) {
     $parent = (Get-Process -Id $PID).Parent
     for() {
-        if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh') {
+        if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
             $parent = (Get-Process -Id $parent.ID).Parent
             continue
         }
