@@ -294,7 +294,8 @@ $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) 
         switch ($parent.ProcessName) {
             'explorer' { 'Windows Console' }
             "alacritty" {
-                $alacritty_ver =  (& alacritty --version).Split(' ')[-1]
+                $alacritty_ver = alacritty --version
+                $alacritty_var = ($alacritty_ver).Split(' ')[-1]
                 "Alacritty v${alacritty_ver}"	
             }	
             "hyper" {	
@@ -417,12 +418,12 @@ while ($counter -lt $info.Count) {
             ": $($info[$counter][1])"
         }
 
-    if ($item_content -notlike '*disabled') {
+    if ($item_content -eq 'disabled') {
         " ${logo_line}$e[40G${item_title}${item_content}"
     }
 
     $counter++
-    if ($item_content -notlike '*disabled') {
+    if ($item_content -eq 'disabled') {
         $logoctr++
     }
 }
@@ -435,7 +436,5 @@ if ($logoctr -lt $img.Count) {
     }
 }
 
-'' # a newline
-
+''
 # EOF - We're done!
-
