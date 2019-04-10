@@ -418,12 +418,12 @@ while ($counter -lt $info.Count) {
             ": $($info[$counter][1])"
         }
 
-    if ($item_content -eq 'disabled') {
+    if ($item_content -notlike '*disabled') {
         " ${logo_line}$e[40G${item_title}${item_content}"
     }
 
     $counter++
-    if ($item_content -eq 'disabled') {
+    if ($item_content -notlike '*disabled') {
         $logoctr++
     }
 }
