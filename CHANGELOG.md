@@ -12,6 +12,7 @@
 - `[!]` Add support for new configuration style ([**@TheIncorrigible1**](https://github.com/TheIncorrigible1))
 - `[!]` Cleaned logic and added consistent style ([**@TheIncorrigible1**](https://github.com/TheIncorrigible1))
 - `[!]` Dependencies `curl` and PowerShell 6 no longer needed
+- `[!]` Added `get-help` page to Winfetch
 
 ### \[v1.1.0\]
 - `[*]` Fixed issue #2: color bar color does not reset in Cmder/ConEmu
