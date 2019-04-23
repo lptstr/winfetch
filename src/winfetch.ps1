@@ -190,8 +190,7 @@ elseif (-not $noimage.IsPresent -and $image) {
 
         if (($row % 2) -eq 0) {
             $upper += "${r};${g};${b}"
-        }
-        else {
+        } else {
             $lower += "${r};${g};${b}"
         }
 
@@ -218,12 +217,10 @@ else {
 $strings.os = if ($configuration.HasFlag([Configuration]::Show_OS)) {
     if ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5) {
         [Environment]::OSVersion.ToString().TrimStart('Microsoft ')
-    }
-    else {
+    } else {
         ($PSVersionTable.OS).TrimStart('Microsoft ')
     }
-}
-else {
+} else {
     $disabled
 }
 
@@ -239,8 +236,7 @@ $strings.username = [Environment]::UserName
 # ===== TITLE =====
 $strings.title = if ($configuration.HasFlag([Configuration]::Show_Title)) {
     "${e}[1;34m{0}${e}[0m@${e}[1;34m{1}${e}[0m" -f $strings['username', 'hostname']
-}
-else {
+} else {
     $disabled
 }
 
@@ -248,8 +244,7 @@ else {
 # ===== DASHES =====
 $strings.dashes = if ($configuration.HasFlag([Configuration]::Show_Dashes)) {
     -join $(for ($i = 0; $i -lt ('{0}@{1}' -f $strings['username', 'hostname']).Length; $i++) { '-' })
-}
-else {
+} else {
     $disabled
 }
 
@@ -258,8 +253,7 @@ else {
 $strings.computer = if ($configuration.HasFlag([Configuration]::Show_Computer)) {
     $compsys = Get-CimInstance -ClassName Win32_ComputerSystem
     '{0} {1}' -f $compsys.Manufacturer, $compsys.Model
-}
-else {
+} else {
     $disabled
 }
 
@@ -274,8 +268,7 @@ $strings.uptime = if ($configuration.HasFlag([Configuration]::Show_Uptime)) {
         ({ $PSItem.Minutes -eq 1 }) { '1 minute' }
         ({ $PSItem.Minutes -gt 1 }) { "$($PSItem.Minutes) minutes" }
     }) -join ' '
-}
-else {
+} else {
     $disabled
 }
 
@@ -286,7 +279,7 @@ else {
 # current powershell instance.
 $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) {
     $parent = (Get-Process -Id $PID).Parent
-    for() {
+    for () {
         if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
             $parent = (Get-Process -Id $parent.ID).Parent
             continue
@@ -310,8 +303,7 @@ $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) 
     } catch {
         $parent.ProcessName
     }
-}
-else {
+} else {
     $disabled
 }
 
@@ -319,15 +311,13 @@ else {
 # ===== CPU/GPU =====
 $strings.cpu = if ($configuration.HasFlag([Configuration]::Show_CPU)) {
     (Get-CimInstance -ClassName Win32_Processor).Name
-}
-else {
+} else {
     $disabled
 }
 
 $strings.gpu = if ($configuration.HasFlag([Configuration]::Show_GPU)) {
     (Get-CimInstance -ClassName Win32_VideoController).Name
-}
-else {
+} else {
     $disabled
 }
 
@@ -338,8 +328,7 @@ $strings.memory = if ($configuration.HasFlag([Configuration]::Show_Memory)) {
     $total = [math]::floor(($m.TotalVisibleMemorySize / 1kb))
     $used = [math]::floor((($m.FreePhysicalMemory - $total) / 1kb))
     ("{0}MiB / {1}MiB" -f $used,$total)
-}
-else {
+} else {
     $disabled
 }
 
@@ -350,8 +339,7 @@ $strings.disk = if ($configuration.HasFlag([Configuration]::Show_Disk)) {
     $total = [math]::floor(($disk.Size / 1gb))
     $used = [math]::floor((($disk.FreeSpace - $total) / 1gb))
     ("{0}GiB / {1}GiB ({2})" -f $used,$total,$disk.VolumeName)
-}
-else {
+} else {
     $disabled
 }
 
@@ -359,8 +347,7 @@ else {
 # ===== POWERSHELL VERSION =====
 $strings.pwsh = if ($configuration.HasFlag([Configuration]::Show_Pwsh)) {
     "PowerShell v$($PSVersionTable.PSVersion)"
-}
-else {
+} else {
     $disabled
 }
 
@@ -383,8 +370,7 @@ $strings.pkgs = if ($configuration.HasFlag([Configuration]::Show_Pkgs)) {
     if ($chocopkg) {
         "$chocopkg (choco)"
     }) -join ', '
-}
-else {
+} else {
     $disabled
 }
 
