@@ -390,7 +390,7 @@ else {
 
 
 # reset terminal sequences and display a newline
-"${e}[0m"
+write-output "${e}[0m"
 
 # add system info into an array
 $info = [collections.generic.list[string[]]]::new()
