@@ -33,6 +33,8 @@
     Download a configuration template. Internet connection required.
 .PARAMETER noimage
     Do not display any image or logo; display information only.
+.PARAMETER help
+    Display this help message.
 .INPUTS
     System.String
 .OUTPUTS
