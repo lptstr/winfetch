@@ -4,6 +4,9 @@
 - `[*]` = fixed issue
 - `[!]` = something changed
 
+### \[Unreleased\]
+- `[!]` Minor internal changes
+
 ### \[v1.2.0\]
 - `[+]` Add support for PowerShell 5
 - `[!]` Rewrite internals, Winfetch is now faster
