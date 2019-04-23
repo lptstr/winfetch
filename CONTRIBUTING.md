@@ -2,7 +2,8 @@
 
 This document, stolen from the Neofetch repository, describes the code style required when contributing to Winfetch.
 
-<!-- [Coding Conventions](#coding-conventions)-->
+- [Coding Conventions](#coding-conventions)
+  - [Clauses](#code-clauses)
 
 ### Coding Conventions
 
@@ -19,3 +20,21 @@ This document, stolen from the Neofetch repository, describes the code style req
     - e.g. `[text.encoding]::utf8.getstring((000,000,000))` instead of `[Text.Encoding]::UTF8.GetString((000,000,000))`.
 
 Also, **please test out your changes** before submitting a PR.
+
+#### Code Clauses
+Do not put the `else/elseif` clause on a separate line:
+```powershell
+if ($condition) {
+
+}
+else {}                # BAD
+
+if ($condition) {
+
+} else {
+
+}                      # GOOD
+
+if ($condition) {}
+else {}                # THIS IS OK
+```
