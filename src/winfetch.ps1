@@ -298,7 +298,7 @@ $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) 
             'explorer' { 'Windows Console' }
             "alacritty" {
                 $alacritty_ver = alacritty --version
-                $alacritty_var = ($alacritty_ver).Split(' ')[-1]
+                $alacritty_ver = ($alacritty_ver).Split(' ')[-1]
                 "Alacritty v${alacritty_ver}"	
             }	
             "hyper" {	
