@@ -439,5 +439,11 @@ if ($logoctr -lt $img.Count) {
     }
 }
 
-''
-# EOF - We're done!
+# print a newline
+write-output ''
+
+#  ___ ___  ___
+# | __/ _ \| __|
+# | _| (_) | _|
+# |___\___/|_|
+#
