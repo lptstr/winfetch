@@ -30,7 +30,7 @@
 .PARAMETER image
     Display a pixelated image instead of the usual logo. Imagemagick required.
 .PARAMETER genconf
-    Download a custom configuration. Internet connection needed.
+    Download a configuration template. Internet connection required.
 .PARAMETER noimage
     Do not display any image or logo; display information only.
 .INPUTS
