@@ -92,6 +92,7 @@ if ($genconf.IsPresent) {
 
 
 # ===== VARIABLES =====
+$disabled = 'disabled'
 $strings = @{
     title    = ''
     dashes   = ''
@@ -223,7 +224,7 @@ $strings.os = if ($configuration.HasFlag([Configuration]::Show_OS)) {
     }
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -240,7 +241,7 @@ $strings.title = if ($configuration.HasFlag([Configuration]::Show_Title)) {
     "${e}[1;34m{0}${e}[0m@${e}[1;34m{1}${e}[0m" -f $strings['username', 'hostname']
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -249,7 +250,7 @@ $strings.dashes = if ($configuration.HasFlag([Configuration]::Show_Dashes)) {
     -join $(for ($i = 0; $i -lt ('{0}@{1}' -f $strings['username', 'hostname']).Length; $i++) { '-' })
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -259,7 +260,7 @@ $strings.computer = if ($configuration.HasFlag([Configuration]::Show_Computer)) 
     '{0} {1}' -f $compsys.Manufacturer, $compsys.Model
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -275,7 +276,7 @@ $strings.uptime = if ($configuration.HasFlag([Configuration]::Show_Uptime)) {
     }) -join ' '
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -311,7 +312,7 @@ $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) 
     }
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -320,14 +321,14 @@ $strings.cpu = if ($configuration.HasFlag([Configuration]::Show_CPU)) {
     (Get-CimInstance -ClassName Win32_Processor).Name
 }
 else {
-    'disabled'
+    $disabled
 }
 
 $strings.gpu = if ($configuration.HasFlag([Configuration]::Show_GPU)) {
     (Get-CimInstance -ClassName Win32_VideoController).Name
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -339,7 +340,7 @@ $strings.memory = if ($configuration.HasFlag([Configuration]::Show_Memory)) {
     ("{0}MiB / {1}MiB" -f $used,$total)
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -351,7 +352,7 @@ $strings.disk = if ($configuration.HasFlag([Configuration]::Show_Disk)) {
     ("{0}GiB / {1}GiB ({2})" -f $used,$total,$disk.VolumeName)
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -360,7 +361,7 @@ $strings.pwsh = if ($configuration.HasFlag([Configuration]::Show_Pwsh)) {
     "PowerShell v$($PSVersionTable.PSVersion)"
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
@@ -384,7 +385,7 @@ $strings.pkgs = if ($configuration.HasFlag([Configuration]::Show_Pkgs)) {
     }) -join ', '
 }
 else {
-    'disabled'
+    $disabled
 }
 
 
