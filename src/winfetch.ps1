@@ -24,7 +24,7 @@
 
 <#
 .SYNOPSIS
-    Winfetch - neofetch ported to PowerShell for windows 10 systems.
+    Winfetch - Neofetch for Windows in PowerShell 5+
 .DESCRIPTION
     Winfetch is a command-line system information utility for Windows written in PowerShell.
 .PARAMETER image
