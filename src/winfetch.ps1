@@ -164,7 +164,7 @@ $img = if (-not $image -and -not $noimage.IsPresent) {
 elseif (-not $noimage.IsPresent -and $image) {
     if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
         write-host 'error: Imagemagick must be installed to print custom images.' -f red
-        write-host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f red
+        write-host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
         exit 1
     }
 
