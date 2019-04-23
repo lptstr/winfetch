@@ -393,7 +393,7 @@ else {
 "${e}[0m"
 
 # add system info into an array
-$info = [System.Collections.Generic.List[string[]]]::new()
+$info = [collections.generic.list[string[]]]::new()
 $info.Add(@("", $strings.title))
 $info.Add(@("", $strings.dashes))
 $info.Add(@("OS", $strings.os))
