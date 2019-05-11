@@ -200,7 +200,7 @@ elseif (-not $noimage.IsPresent -and $image) {
                 $CURR_ROW += "${e}[38;2;$($upper[$i]);48;2;$($lower[$i])m${CHAR}"
                 $i++
             }
-            "${CURR_ROW}${e}[0m${e}[B${e}[0G"
+            "${CURR_ROW}${e}[0m"
 
             $CURR_ROW = ""
             $upper = @()
