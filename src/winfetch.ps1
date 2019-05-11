@@ -289,15 +289,6 @@ $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) 
     try {
         switch ($parent.ProcessName) {
             'explorer' { 'Windows Console' }
-            "alacritty" {
-                $alacritty_ver = alacritty --version
-                $alacritty_ver = ($alacritty_ver).Split(' ')[-1]
-                "Alacritty v${alacritty_ver}"	
-            }	
-            "hyper" {	
-                $hyper_ver = ((hyper --version).Split("`n")[0]).Split(" ")[-1]	
-                "Hyper v${hyper_ver}"	
-            }
             default { $PSItem }
         }
     } catch {
