@@ -6,6 +6,8 @@
 
 ### \[Unreleased\]
 - `[!]` Minor internal changes
+- `[!]` Winfetch no longer outputs terminal version (fix #)
+- `[+]` Short command options
 
 ### \[v1.2.0\]
 - `[+]` Add support for PowerShell 5
