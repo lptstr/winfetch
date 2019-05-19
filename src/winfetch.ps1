@@ -46,10 +46,10 @@
 
 [CmdletBinding()]
 param(
-    [string]$image,
-    [switch]$genconf,
-    [switch]$noimage,
-    [switch]$help
+    [string][alias('i')]$image,
+    [switch][alias('g')]$genconf,
+    [switch][alias('n')]$noimage,
+    [switch][alias('h')]$help
 )
 
 $e = [char]0x1B
@@ -57,6 +57,12 @@ $e = [char]0x1B
 $colorBar = ('{0}[0;40m{1}{0}[0;41m{1}{0}[0;42m{1}{0}[0;43m{1}' +
              '{0}[0;44m{1}{0}[0;45m{1}{0}[0;46m{1}{0}[0;47m{1}' +
              '{0}[0m') -f $e, '   '
+
+$is_pscore = if ($PSVersionTable.PSEdition.ToString() -eq 'Core') {
+    $true
+} else {
+    $false
+}
 
 $configdir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
 $config = "${configdir}/winfetch/config.ps1"
@@ -277,7 +283,7 @@ $strings.uptime = if ($configuration.HasFlag([Configuration]::Show_Uptime)) {
 # this section works by getting
 # the parent processes of the
 # current powershell instance.
-$strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal)) {
+$strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal) -and $is_pscore) {
     $parent = (Get-Process -Id $PID).Parent
     for () {
         if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
