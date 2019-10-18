@@ -335,7 +335,8 @@ $strings.disk = if ($configuration.HasFlag([Configuration]::Show_Disk)) {
     $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DeviceID="C:"'
     $total = [math]::floor(($disk.Size / 1gb))
     $used = [math]::floor((($disk.FreeSpace - $total) / 1gb))
-    ("{0}GiB / {1}GiB ({2})" -f $used,$total,$disk.VolumeName)
+    $usage = [math]::floor(($used / $total))
+    ("{0}GiB / {1}GiB ({2}%)" -f $used,$total,$usage)
 } else {
     $disabled
 }
@@ -388,7 +389,7 @@ $info.Add(@("Terminal", $strings.terminal))
 $info.Add(@("CPU", $strings.cpu))
 $info.Add(@("GPU", $strings.gpu))
 $info.Add(@("Memory", $strings.memory))
-$info.Add(@("Disk", $strings.disk))
+$info.Add(@("Disk (C:)", $strings.disk))
 $info.Add(@("", ""))
 $info.Add(@("", $colorBar))
 
