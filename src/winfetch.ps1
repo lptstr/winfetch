@@ -322,9 +322,9 @@ $strings.gpu = if ($configuration.HasFlag([Configuration]::Show_GPU)) {
 # ===== MEMORY =====
 $strings.memory = if ($configuration.HasFlag([Configuration]::Show_Memory)) {
     $m = Get-CimInstance -ClassName Win32_OperatingSystem
-    $total = [math]::floor(($m.TotalVisibleMemorySize / 1kb))
-    $used = [math]::floor((($m.FreePhysicalMemory - $total) / 1kb))
-    ("{0}MiB / {1}MiB" -f $used,$total)
+    $total = [math]::floor(($m.TotalVisibleMemorySize / 1mb))
+    $used = [math]::floor((($m.FreePhysicalMemory - $total) / 1mb))
+    ("{0}GiB / {1}GiB" -f $used,$total)
 } else {
     $disabled
 }
