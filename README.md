@@ -1,4 +1,5 @@
-> Because I'm no longer using Windows frequently, I'm currently looking for an additional maintainer to assist. [#17](https://github.com/lptstr/winfetch/issues/17)
+> Because I'm no longer using Windows frequently, I'm currently looking for an additional maintainer to assist in the Winfetch development. [#17](https://github.com/lptstr/winfetch/issues/17)
+<br>
 
 <h3 align="center"><img src="https://lptstr.github.io/lptstr-images/proj/winfetch/logo.png" alt="logo" height="100px"></h3>
 <p align="center">A command-line system information utility for Windows 10</p>
