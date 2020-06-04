@@ -335,7 +335,7 @@ $strings.disk = if ($configuration.HasFlag([Configuration]::Show_Disk)) {
     $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DeviceID="C:"'
     $total = [math]::floor(($disk.Size / 1gb))
     $used = [math]::floor((($disk.FreeSpace - $total) / 1gb))
-    $usage = [math]::floor(($used / $total))
+    $usage = [math]::floor(($used / $total * 100))
     ("{0}GiB / {1}GiB ({2}%)" -f $used,$total,$usage)
 } else {
     $disabled
