@@ -27,7 +27,7 @@
 .GUID 1c26142a-da43-4125-9d70-97555cbb1752
 .DESCRIPTION Winfetch is a command-line system information utility for Windows written in PowerShell.
 .AUTHOR lptstr
-.PROJECTURI https://github.com/ppadial/winfetch
+.PROJECTURI https://github.com/lptstr/winfetch
 .COMPANYNAME
 .COPYRIGHT
 .TAGS
@@ -101,7 +101,7 @@ if ($help) {
 # ===== GENERATE CONFIGURATION =====
 if ($genconf.IsPresent) {
     if ((Get-Item -Path $config).Length -gt 0) {
-        Write-Output 'ERROR: configuration file already exists!' -f red
+        Write-Host 'ERROR: configuration file already exists!' -f red
         exit 1
     }
     "INFO: downloading default config to '$config'."
@@ -183,8 +183,8 @@ $img = if (-not $image -and -not $noimage.IsPresent) {
 }
 elseif (-not $noimage.IsPresent -and $image) {
     if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
-        Write-Output 'error: Imagemagick must be installed to print custom images.' -f red
-        Write-Output 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
+        Write-Host 'ERROR: Imagemagick must be installed to print custom images.' -f red
+        Write-Host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
         exit 1
     }
 
@@ -197,7 +197,7 @@ elseif (-not $noimage.IsPresent -and $image) {
         $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
     }
     if (-not (test-path -path $image)) {
-        Write-Output 'Specified image or wallpaper does not exist.' -f red
+        Write-Host 'ERROR: Specified image or wallpaper does not exist.' -f red
         exit 1
     }
     $pixels = @((magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:-).Split("`n"))

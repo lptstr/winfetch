@@ -40,7 +40,6 @@ $> posh-winfetch
 
 ## Contributors
 
-* [@lptstr](github.com/lptstr)
-* [@ppadial](github.com/ppadial)
+See our [Contributor](https://github.com/lptstr/winfetch/wiki/Contributors) page in wiki
 
 #### More: \[[Dependencies](https://github.com/lptstr/winfetch/wiki/Dependencies)\] \[[Installation](https://github.com/lptstr/winfetch/wiki/Installation)\] \[[Usage](https://github.com/lptstr/winfetch/wiki/Basic-Usage)\]
