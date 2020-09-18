@@ -1,6 +1,3 @@
-# Posh Winfetch
-> A command-line system information utility for Windows 10
-
 <h3 align="center"><img src="https://lptstr.github.io/lptstr-images/proj/winfetch/logo.png" alt="logo" height="100px"></h3>
 
 <p align="center">
@@ -8,7 +5,7 @@
 <img alt="GitHub" src="https://img.shields.io/github/license/lptstr/winfetch.svg">
 <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/lptstr/winfetch.svg">
 <a href="https://www.codacy.com/app/lptstr/winfetch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lptstr/winfetch&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/cc3ea20a9c4e4ec8a441e84dd9baa241"/></a>
-<img alt="PSGallery" src="https://img.shields.io/powershellgallery/v/posh-winfetch.svg?style=flat-square&label=posh-winfetch">
+<img alt="PSGallery" src="https://img.shields.io/powershellgallery/v/posh-winfetch.svg?label=posh-winfetch">
   <a href="https://www.powershellgallery.com/packages/posh-winfetch/"></a>
 </p>
 
@@ -40,6 +37,6 @@ $> posh-winfetch
 
 ## Contributors
 
-See our [Contributor](https://github.com/lptstr/winfetch/wiki/Contributors) page in wiki
+See the [Contributors](https://github.com/lptstr/winfetch/wiki/Contributors) page in the wiki.
 
 #### More: \[[Dependencies](https://github.com/lptstr/winfetch/wiki/Dependencies)\] \[[Installation](https://github.com/lptstr/winfetch/wiki/Installation)\] \[[Usage](https://github.com/lptstr/winfetch/wiki/Basic-Usage)\]
