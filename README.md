@@ -35,8 +35,4 @@ $> Install-Script posh-winfetch -Scope CurrentUser
 $> posh-winfetch
 ```
 
-## Contributors
-
-See the [Contributors](https://github.com/lptstr/winfetch/wiki/Contributors) page in the wiki.
-
 #### More: \[[Dependencies](https://github.com/lptstr/winfetch/wiki/Dependencies)\] \[[Installation](https://github.com/lptstr/winfetch/wiki/Installation)\] \[[Usage](https://github.com/lptstr/winfetch/wiki/Basic-Usage)\]
