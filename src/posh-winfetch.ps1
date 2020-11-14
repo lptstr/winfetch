@@ -113,6 +113,7 @@ if ($genconf.IsPresent) {
 
 # ===== VARIABLES =====
 $disabled = 'disabled'
+$cimSession = New-CimSession
 $strings = @{
     title    = ''
     dashes   = ''
@@ -271,7 +272,7 @@ $strings.dashes = if ($configuration.HasFlag([Configuration]::Show_Dashes)) {
 
 # ===== COMPUTER =====
 $strings.computer = if ($configuration.HasFlag([Configuration]::Show_Computer)) {
-    $compsys = Get-CimInstance -ClassName Win32_ComputerSystem
+    $compsys = Get-CimInstance -ClassName Win32_ComputerSystem -Property Manufacturer,Model -CimSession $cimSession
     '{0} {1}' -f $compsys.Manufacturer, $compsys.Model
 } else {
     $disabled
@@ -280,7 +281,7 @@ $strings.computer = if ($configuration.HasFlag([Configuration]::Show_Computer)) 
 
 # ===== UPTIME =====
 $strings.uptime = if ($configuration.HasFlag([Configuration]::Show_Uptime)) {
-    $(switch ((Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime) {
+    $(switch ((Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem -Property LastBootUpTime -CimSession $cimSession).LastBootUpTime) {
         ({ $PSItem.Days -eq 1 }) { '1 day' }
         ({ $PSItem.Days -gt 1 }) { "$($PSItem.Days) days" }
         ({ $PSItem.Hours -eq 1 }) { '1 hour' }
@@ -321,13 +322,13 @@ $strings.terminal = if ($configuration.HasFlag([Configuration]::Show_Terminal) -
 
 # ===== CPU/GPU =====
 $strings.cpu = if ($configuration.HasFlag([Configuration]::Show_CPU)) {
-    (Get-CimInstance -ClassName Win32_Processor).Name
+    (Get-CimInstance -ClassName Win32_Processor -Property Name -CimSession $cimSession).Name
 } else {
     $disabled
 }
 
 $strings.gpu = if ($configuration.HasFlag([Configuration]::Show_GPU)) {
-    (Get-CimInstance -ClassName Win32_VideoController).Name
+    (Get-CimInstance -ClassName Win32_VideoController -Property Name -CimSession $cimSession).Name
 } else {
     $disabled
 }
@@ -335,7 +336,7 @@ $strings.gpu = if ($configuration.HasFlag([Configuration]::Show_GPU)) {
 
 # ===== MEMORY =====
 $strings.memory = if ($configuration.HasFlag([Configuration]::Show_Memory)) {
-    $m = Get-CimInstance -ClassName Win32_OperatingSystem
+    $m = Get-CimInstance -ClassName Win32_OperatingSystem -Property TotalVisibleMemorySize,FreePhysicalMemory -CimSession $cimSession
     $total = [math]::floor(($m.TotalVisibleMemorySize / 1mb))
     $used = [math]::floor((($m.FreePhysicalMemory - $total) / 1mb))
     ("{0}GiB / {1}GiB" -f $used,$total)
@@ -346,7 +347,7 @@ $strings.memory = if ($configuration.HasFlag([Configuration]::Show_Memory)) {
 
 # ===== DISK USAGE =====
 $strings.disk = if ($configuration.HasFlag([Configuration]::Show_Disk)) {
-    $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DeviceID="C:"'
+    $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DeviceID="C:"' -Property Size,FreeSpace -CimSession $cimSession
     $total = [math]::floor(($disk.Size / 1gb))
     $used = [math]::floor((($disk.FreeSpace - $total) / 1gb))
     $usage = [math]::floor(($used / $total * 100))
