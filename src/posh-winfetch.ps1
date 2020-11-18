@@ -99,7 +99,7 @@ if ($help) {
 }
 
 # ===== GENERATE CONFIGURATION =====
-if ($genconf.IsPresent) {
+if ($genconf) {
     if ((Get-Item -Path $config).Length -gt 0) {
         Write-Host 'ERROR: configuration file already exists!' -f red
         exit 1
@@ -160,7 +160,7 @@ else {
 
 
 # ===== IMAGE =====
-$img = if (-not $image -and -not $noimage.IsPresent) {
+$img = if (-not $image -and -not $noimage) {
     @(
         "${e}[1;34m                    ....,,:;+ccllll${e}[0m"
         "${e}[1;34m      ...,,+:;  cllllllllllllllllll${e}[0m"
@@ -182,7 +182,7 @@ $img = if (-not $image -and -not $noimage.IsPresent) {
         "${e}[1;34m                                 ````${e}[0m"
     )
 }
-elseif (-not $noimage.IsPresent -and $image) {
+elseif (-not $noimage -and $image) {
     if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
         Write-Host 'ERROR: Imagemagick must be installed to print custom images.' -f red
         Write-Host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
