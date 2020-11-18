@@ -91,9 +91,9 @@ if (-not (Test-Path -Path $config)) {
 # ===== DISPLAY HELP =====
 if ($help) {
     if (Get-Command -Name less -ErrorAction Ignore) {
-        get-help ($MyInvocation.MyCommand.Definition) -full | less
+        Get-Help ($MyInvocation.MyCommand.Definition) -Full | less
     } else {
-        get-help ($MyInvocation.MyCommand.Definition) -full
+        Get-Help ($MyInvocation.MyCommand.Definition) -Full
     }
     exit 0
 }
@@ -197,7 +197,7 @@ elseif (-not $noimage -and $image) {
     if ($image -eq 'wallpaper') {
         $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
     }
-    if (-not (test-path -path $image)) {
+    if (-not (Test-Path -path $image)) {
         Write-Host 'ERROR: Specified image or wallpaper does not exist.' -f red
         exit 1
     }
@@ -247,7 +247,7 @@ $strings.os = if ($configuration.HasFlag([Configuration]::Show_OS)) {
 
 
 # ===== HOSTNAME =====
-$strings.hostname = $Env:COMPUTERNAME
+$strings.hostname = $env:COMPUTERNAME
 
 
 # ===== USERNAME =====
@@ -389,7 +389,7 @@ $strings.pkgs = if ($configuration.HasFlag([Configuration]::Show_Pkgs)) {
 
 
 # reset terminal sequences and display a newline
-write-output "${e}[0m"
+Write-Output "${e}[0m"
 
 # add system info into an array
 $info = [collections.generic.list[string[]]]::new()
@@ -439,7 +439,7 @@ if ($logoctr -lt $img.Count) {
 }
 
 # print a newline
-write-output ''
+Write-Output ""
 
 #  ___ ___  ___
 # | __/ _ \| __|
