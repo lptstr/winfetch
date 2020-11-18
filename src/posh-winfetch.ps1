@@ -153,8 +153,7 @@ enum Configuration
 }
 [Configuration]$configuration = if ((Get-Item -Path $config).Length -gt 0) {
     . $config
-}
-else {
+} else {
     0xFFF
 }
 
