@@ -72,11 +72,7 @@ $colorBar = ('{0}[0;40m{1}{0}[0;41m{1}{0}[0;42m{1}{0}[0;43m{1}' +
             '{0}[0;44m{1}{0}[0;45m{1}{0}[0;46m{1}{0}[0;47m{1}' +
             '{0}[0m') -f $e, '   '
 
-$is_pscore = if ($PSVersionTable.PSEdition.ToString() -eq 'Core') {
-    $true
-} else {
-    $false
-}
+$is_pscore = $PSVersionTable.PSEdition.ToString() -eq 'Core'
 
 $configdir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
 $configPath = "${configdir}/winfetch/config.ps1"
