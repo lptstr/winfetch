@@ -104,9 +104,9 @@ if ($genconf) {
         Write-Host 'ERROR: configuration file already exists!' -f red
         exit 1
     }
-    "INFO: downloading default config to '$config'."
+    Write-Output "INFO: downloading default config to '$config'."
     Invoke-WebRequest -Uri $defaultconfig -OutFile $config -UseBasicParsing
-    'INFO: successfully completed download.'
+    Write-Output 'INFO: successfully completed download.'
     exit 0
 }
 
@@ -421,7 +421,7 @@ while ($counter -lt $info.Count) {
         }
 
     if ($item_content -notlike '*disabled') {
-        " ${logo_line}$e[40G${item_title}${item_content}"
+        Write-Output " ${logo_line}$e[40G${item_title}${item_content}"
     }
 
     $counter++
