@@ -79,13 +79,13 @@ $is_pscore = if ($PSVersionTable.PSEdition.ToString() -eq 'Core') {
 }
 
 $configdir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
-$config = "${configdir}/winfetch/config.ps1"
+$configPath = "${configdir}/winfetch/config.ps1"
 
 $defaultconfig = 'https://raw.githubusercontent.com/lptstr/winfetch/master/lib/config.ps1'
 
 # ensure configuration directory exists
-if (-not (Test-Path -Path $config)) {
-    [void](New-Item -Path $config -Force)
+if (-not (Test-Path -Path $configPath)) {
+    [void](New-Item -Path $configPath -Force)
 }
 
 # ===== DISPLAY HELP =====
@@ -100,12 +100,12 @@ if ($help) {
 
 # ===== GENERATE CONFIGURATION =====
 if ($genconf) {
-    if ((Get-Item -Path $config).Length -gt 0) {
+    if ((Get-Item -Path $configPath).Length -gt 0) {
         Write-Host 'ERROR: configuration file already exists!' -f red
         exit 1
     }
-    Write-Output "INFO: downloading default config to '$config'."
-    Invoke-WebRequest -Uri $defaultconfig -OutFile $config -UseBasicParsing
+    Write-Output "INFO: downloading default config to '$configPath'."
+    Invoke-WebRequest -Uri $defaultconfig -OutFile $configPath -UseBasicParsing
     Write-Output 'INFO: successfully completed download.'
     exit 0
 }
@@ -151,8 +151,8 @@ enum Configuration
     Show_Pwsh     = 1024
     Show_Pkgs     = 2048
 }
-[Configuration]$configuration = if ((Get-Item -Path $config).Length -gt 0) {
-    . $config
+[Configuration]$configuration = if ((Get-Item -Path $configPath).Length -gt 0) {
+    . $configPath
 } else {
     0xFFF
 }
