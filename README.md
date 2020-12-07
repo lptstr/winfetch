@@ -28,11 +28,4 @@ While Winfetch does work in the majority of cases, things may break occasionally
 3. **No need for the WSL, Cygwin, or MSYS2.** While you need to install a bash emulator (WSL, Git Bash, MSYS2, Cygwin) to run Neofetch, all you need for Winfetch is PowerShell, which is installed by default on most Windows computers.
 
 
-## Quick Usage
-
-```pwsh
-$> Install-Script posh-winfetch -Scope CurrentUser
-$> posh-winfetch
-```
-
 #### More: \[[Dependencies](https://github.com/lptstr/winfetch/wiki/Dependencies)\] \[[Installation](https://github.com/lptstr/winfetch/wiki/Installation)\] \[[Usage](https://github.com/lptstr/winfetch/wiki/Basic-Usage)\]
