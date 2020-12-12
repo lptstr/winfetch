@@ -232,7 +232,8 @@ else {
 # ===== OS =====
 $strings.os = if ($configuration.HasFlag([Configuration]::Show_OS)) {
     if ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5) {
-        [Environment]::OSVersion.ToString().TrimStart('Microsoft ')
+        $os = Get-CimInstance -ClassName Win32_OperatingSystem -Property Caption,OSArchitecture,Version -CimSession $cimSession
+        "$($os.Caption.TrimStart('Microsoft ')) [$($os.OSArchitecture)] ($($os.Version))"
     } else {
         ($PSVersionTable.OS).TrimStart('Microsoft ')
     }
