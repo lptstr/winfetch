@@ -72,41 +72,37 @@ $colorBar = ('{0}[0;40m{1}{0}[0;41m{1}{0}[0;42m{1}{0}[0;43m{1}' +
             '{0}[0;44m{1}{0}[0;45m{1}{0}[0;46m{1}{0}[0;47m{1}' +
             '{0}[0m') -f $e, '   '
 
-$is_pscore = if ($PSVersionTable.PSEdition.ToString() -eq 'Core') {
-    $true
-} else {
-    $false
-}
+$is_pscore = $PSVersionTable.PSEdition.ToString() -eq 'Core'
 
 $configdir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
-$config = "${configdir}/winfetch/config.ps1"
+$configPath = "${configdir}/winfetch/config.ps1"
 
 $defaultconfig = 'https://raw.githubusercontent.com/lptstr/winfetch/master/lib/config.ps1'
 
 # ensure configuration directory exists
-if (-not (Test-Path -Path $config)) {
-    [void](New-Item -Path $config -Force)
+if (-not (Test-Path -Path $configPath)) {
+    [void](New-Item -Path $configPath -Force)
 }
 
 # ===== DISPLAY HELP =====
 if ($help) {
     if (Get-Command -Name less -ErrorAction Ignore) {
-        get-help ($MyInvocation.MyCommand.Definition) -full | less
+        Get-Help ($MyInvocation.MyCommand.Definition) -Full | less
     } else {
-        get-help ($MyInvocation.MyCommand.Definition) -full
+        Get-Help ($MyInvocation.MyCommand.Definition) -Full
     }
     exit 0
 }
 
 # ===== GENERATE CONFIGURATION =====
-if ($genconf.IsPresent) {
-    if ((Get-Item -Path $config).Length -gt 0) {
+if ($genconf) {
+    if ((Get-Item -Path $configPath).Length -gt 0) {
         Write-Host 'ERROR: configuration file already exists!' -f red
         exit 1
     }
-    "INFO: downloading default config to '$config'."
-    Invoke-WebRequest -Uri $defaultconfig -OutFile $config -UseBasicParsing
-    'INFO: successfully completed download.'
+    Write-Output "INFO: downloading default config to '$configPath'."
+    Invoke-WebRequest -Uri $defaultconfig -OutFile $configPath -UseBasicParsing
+    Write-Output 'INFO: successfully completed download.'
     exit 0
 }
 
@@ -151,16 +147,15 @@ enum Configuration
     Show_Pwsh     = 1024
     Show_Pkgs     = 2048
 }
-[Configuration]$configuration = if ((Get-Item -Path $config).Length -gt 0) {
-    . $config
-}
-else {
+[Configuration]$configuration = if ((Get-Item -Path $configPath).Length -gt 0) {
+    . $configPath
+} else {
     0xFFF
 }
 
 
 # ===== IMAGE =====
-$img = if (-not $image -and -not $noimage.IsPresent) {
+$img = if (-not $image -and -not $noimage) {
     @(
         "${e}[1;34m                    ....,,:;+ccllll${e}[0m"
         "${e}[1;34m      ...,,+:;  cllllllllllllllllll${e}[0m"
@@ -182,7 +177,7 @@ $img = if (-not $image -and -not $noimage.IsPresent) {
         "${e}[1;34m                                 ````${e}[0m"
     )
 }
-elseif (-not $noimage.IsPresent -and $image) {
+elseif (-not $noimage -and $image) {
     if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
         Write-Host 'ERROR: Imagemagick must be installed to print custom images.' -f red
         Write-Host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
@@ -197,7 +192,7 @@ elseif (-not $noimage.IsPresent -and $image) {
     if ($image -eq 'wallpaper') {
         $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
     }
-    if (-not (test-path -path $image)) {
+    if (-not (Test-Path -path $image)) {
         Write-Host 'ERROR: Specified image or wallpaper does not exist.' -f red
         exit 1
     }
@@ -247,7 +242,7 @@ $strings.os = if ($configuration.HasFlag([Configuration]::Show_OS)) {
 
 
 # ===== HOSTNAME =====
-$strings.hostname = $Env:COMPUTERNAME
+$strings.hostname = $env:COMPUTERNAME
 
 
 # ===== USERNAME =====
@@ -389,7 +384,7 @@ $strings.pkgs = if ($configuration.HasFlag([Configuration]::Show_Pkgs)) {
 
 
 # reset terminal sequences and display a newline
-write-output "${e}[0m"
+Write-Output "${e}[0m"
 
 # add system info into an array
 $info = [collections.generic.list[string[]]]::new()
@@ -421,7 +416,7 @@ while ($counter -lt $info.Count) {
         }
 
     if ($item_content -notlike '*disabled') {
-        " ${logo_line}$e[40G${item_title}${item_content}"
+        Write-Output " ${logo_line}$e[40G${item_title}${item_content}"
     }
 
     $counter++
@@ -439,7 +434,7 @@ if ($logoctr -lt $img.Count) {
 }
 
 # print a newline
-write-output ''
+Write-Output ""
 
 #  ___ ___  ___
 # | __/ _ \| __|
