@@ -411,6 +411,23 @@ function info_pkgs {
 }
 
 
+# ===== BATTERY =====
+function info_battery {
+    $battery = (Get-CimInstance Win32_Battery -CimSession $cimSession -Property EstimatedChargeRemaining).EstimatedChargeRemaining
+
+    $content = if ($battery) {
+        "$battery %"
+    } else {
+        "(none)"
+    }
+
+    return @{
+        title = "Battery"
+        content = $content
+    }
+}
+
+
 # reset terminal sequences and display a newline
 Write-Host "$e[0m"
 
