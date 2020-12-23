@@ -19,6 +19,7 @@
     "dashes"
     "os"
     "computer"
+    "motherboard"
     # "custom_time"  # use custom info line
     "uptime"
     "pkgs"
@@ -28,6 +29,9 @@
     "gpu"
     "memory"
     # "disk"
+    # "battery"
+    # "local_ip"
+    # "public_ip"
     "blank"
     "colorbar"
 )
