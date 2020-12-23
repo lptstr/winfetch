@@ -428,6 +428,24 @@ function info_battery {
 }
 
 
+# ===== IP =====
+function info_local_ip {
+    $indexDefault = Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Sort-Object -Property RouteMetric | Select-Object -First 1 | Select-Object -ExpandProperty ifIndex
+    $local_ip = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $indexDefault | Select-Object -ExpandProperty IPAddress
+    return @{
+        title = "Local IP"
+        content = $local_ip
+    }
+}
+
+function info_public_ip {
+    return @{
+        title = "Public IP"
+        content = (Resolve-DnsName -Name myip.opendns.com -Server resolver1.opendns.com).IPAddress
+    }
+}
+
+
 # reset terminal sequences and display a newline
 Write-Host "$e[0m"
 
