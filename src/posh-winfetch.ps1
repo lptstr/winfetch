@@ -245,6 +245,16 @@ function info_os {
 }
 
 
+# ===== MOTHERBOARD =====
+function info_motherboard {
+    $motherboard = Get-CimInstance Win32_BaseBoard -CimSession $cimSession -Property Manufacturer,Product
+    return @{
+        title = "Motherboard"
+        content = "{0} {1}" -f $motherboard.Manufacturer, $motherboard.Product
+    }
+}
+
+
 # ===== TITLE =====
 function info_title {
     return @{
