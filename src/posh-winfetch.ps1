@@ -113,6 +113,7 @@ $baseConfig = @(
     "dashes"
     "os"
     "computer"
+    "motherboard"
     "uptime"
     "pkgs"
     "pwsh"
@@ -121,6 +122,9 @@ $baseConfig = @(
     "gpu"
     "memory"
     "disk"
+    "battery"
+    "local_ip"
+    "public_ip"
     "blank"
     "colorbar"
 )
