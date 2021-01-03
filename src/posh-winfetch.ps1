@@ -296,18 +296,23 @@ function info_uptime {
 # current powershell instance.
 function info_terminal {
     if (-not $is_pscore) {
-        return @{
-            title   = "Terminal"
-            content = "Unknown"
+        $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -CimSession $cimSession).ParentProcessId
+        for () {
+            if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
+                $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($parent.ID)" -CimSession $cimSession).ParentProcessId
+                continue
+            }
+            break
         }
-    }
-    $parent = (Get-Process -Id $PID).Parent
-    for () {
-        if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
-            $parent = (Get-Process -Id $parent.ID).Parent
-            continue
+    } else {
+        $parent = (Get-Process -Id $PID).Parent
+        for () {
+            if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
+                $parent = (Get-Process -Id $parent.ID).Parent
+                continue
+            }
+            break
         }
-        break
     }
     try {
         $terminal = switch ($parent.ProcessName) {
