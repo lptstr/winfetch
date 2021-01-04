@@ -291,15 +291,13 @@ function info_uptime {
 
 
 # ===== TERMINAL =====
-# this section works by getting
-# the parent processes of the
-# current powershell instance.
+# this section works by getting the parent processes of the current powershell instance.
 function info_terminal {
     if (-not $is_pscore) {
-        $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -CimSession $cimSession).ParentProcessId
+        $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -Property ParentProcessId -CimSession $cimSession).ParentProcessId
         for () {
             if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
-                $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($parent.ID)" -CimSession $cimSession).ParentProcessId
+                $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($parent.ID)" -Property ParentProcessId -CimSession $cimSession).ParentProcessId
                 continue
             }
             break
@@ -317,6 +315,7 @@ function info_terminal {
     try {
         $terminal = switch ($parent.ProcessName) {
             'explorer' { 'Windows Console' }
+            'Code' { 'Visual Studio Code' }
             default { $PSItem }
         }
     } catch {
