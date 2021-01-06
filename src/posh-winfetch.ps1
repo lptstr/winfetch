@@ -113,6 +113,7 @@ $baseConfig = @(
     "dashes"
     "os"
     "computer"
+    "kernel"
     "uptime"
     "pkgs"
     "pwsh"
@@ -236,8 +237,8 @@ function info_os {
     return @{
         title   = "OS"
         content = if ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5) {
-            $os = Get-CimInstance -ClassName Win32_OperatingSystem -Property Caption,OSArchitecture,Version -CimSession $cimSession
-            "$($os.Caption.TrimStart('Microsoft ')) [$($os.OSArchitecture)] ($($os.Version))"
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -Property Caption,OSArchitecture -CimSession $cimSession
+            "$($os.Caption.TrimStart('Microsoft ')) [$($os.OSArchitecture)]"
         } else {
             ($PSVersionTable.OS).TrimStart('Microsoft ')
         }
@@ -270,6 +271,19 @@ function info_computer {
     return @{
         title   = "Host"
         content = '{0} {1}' -f $compsys.Manufacturer, $compsys.Model
+    }
+}
+
+
+# ===== KERNEL =====
+function info_kernel {
+    return @{
+        title   = "Kernel"
+        content = if ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5) {
+            "$([System.Environment]::OSVersion.Version)"
+        } else {
+            "$(uname -r)"
+        }
     }
 }
 
@@ -369,7 +383,7 @@ function info_disk {
 # ===== POWERSHELL VERSION =====
 function info_pwsh {
     return @{
-        title   = "PowerShell"
+        title   = "Shell"
         content = "PowerShell v$($PSVersionTable.PSVersion)"
     }
 }
