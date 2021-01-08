@@ -443,9 +443,17 @@ function info_local_ip {
 }
 
 function info_public_ip {
+    try {
+        $public_ip = (Resolve-DnsName -Name myip.opendns.com -Server resolver1.opendns.com).IPAddress
+    } catch {}
+
+    if (-not $public_ip) {
+        $public_ip = Invoke-RestMethod -Uri https://ifconfig.me/ip
+    }
+
     return @{
         title = "Public IP"
-        content = (Resolve-DnsName -Name myip.opendns.com -Server resolver1.opendns.com).IPAddress
+        content = $public_ip
     }
 }
 
