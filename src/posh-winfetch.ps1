@@ -417,17 +417,41 @@ function info_pkgs {
 
 # ===== BATTERY =====
 function info_battery {
-    $battery = (Get-CimInstance Win32_Battery -CimSession $cimSession -Property EstimatedChargeRemaining).EstimatedChargeRemaining
+    $battery = Get-CimInstance Win32_Battery -CimSession $cimSession -Property BatteryStatus,EstimatedChargeRemaining,EstimatedRunTime,TimeToFullCharge
 
-    $content = if ($battery) {
-        "$battery %"
+    if (-not $battery) {
+        return @{
+        title = "Battery"
+        content = "(none)"
+        }
+    }
+
+    $power = Get-CimInstance BatteryStatus -Namespace root\wmi -CimSession $cimSession -Property Charging,PowerOnline
+
+    $status = if ($power.Charging) {
+        "Charging"
+    } elseif ($power.PowerOnline) {
+        "Plugged in"
     } else {
-        "(none)"
+        "Discharging"
+    }
+
+    $timeRemaining = if ($power.Charging) {
+        $battery.TimeToFullCharge
+    } else {
+        $battery.EstimatedRunTime
+    }
+
+    # don't show time remaining if windows hasn't properly reported it yet
+    $timeFormatted = if ($timeRemaining -and $timeRemaining -lt 71582788) {
+        $hours = [math]::floor($timeRemaining / 60)
+        $minutes = $timeRemaining % 60
+        ", ${hours}h ${minutes}m"
     }
 
     return @{
         title = "Battery"
-        content = $content
+        content = "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
     }
 }
 
