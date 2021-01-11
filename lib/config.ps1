@@ -19,6 +19,7 @@
     "dashes"
     "os"
     "computer"
+    "kernel"
     # "custom_time"  # use custom info line
     "uptime"
     "pkgs"
