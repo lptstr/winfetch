@@ -421,8 +421,8 @@ function info_battery {
 
     if (-not $battery) {
         return @{
-        title = "Battery"
-        content = "(none)"
+            title = "Battery"
+            content = "(none)"
         }
     }
 
