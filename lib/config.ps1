@@ -19,6 +19,7 @@
     "dashes"
     "os"
     "computer"
+    "kernel"
     "motherboard"
     # "custom_time"  # use custom info line
     "uptime"

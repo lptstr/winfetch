@@ -113,6 +113,7 @@ $baseConfig = @(
     "dashes"
     "os"
     "computer"
+    "kernel"
     "motherboard"
     "uptime"
     "pkgs"
@@ -240,8 +241,8 @@ function info_os {
     return @{
         title   = "OS"
         content = if ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5) {
-            $os = Get-CimInstance -ClassName Win32_OperatingSystem -Property Caption,OSArchitecture,Version -CimSession $cimSession
-            "$($os.Caption.TrimStart('Microsoft ')) [$($os.OSArchitecture)] ($($os.Version))"
+            $os = Get-CimInstance -ClassName Win32_OperatingSystem -Property Caption,OSArchitecture -CimSession $cimSession
+            "$($os.Caption.TrimStart('Microsoft ')) [$($os.OSArchitecture)]"
         } else {
             ($PSVersionTable.OS).TrimStart('Microsoft ')
         }
@@ -288,6 +289,19 @@ function info_computer {
 }
 
 
+# ===== KERNEL =====
+function info_kernel {
+    return @{
+        title   = "Kernel"
+        content = if ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5) {
+            "$([System.Environment]::OSVersion.Version)"
+        } else {
+            "$(uname -r)"
+        }
+    }
+}
+
+
 # ===== UPTIME =====
 function info_uptime {
     @{
@@ -305,27 +319,31 @@ function info_uptime {
 
 
 # ===== TERMINAL =====
-# this section works by getting
-# the parent processes of the
-# current powershell instance.
+# this section works by getting the parent processes of the current powershell instance.
 function info_terminal {
     if (-not $is_pscore) {
-        return @{
-            title   = "Terminal"
-            content = "Unknown"
+        $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $PID" -Property ParentProcessId -CimSession $cimSession).ParentProcessId
+        for () {
+            if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
+                $parent = Get-Process -Id (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($parent.ID)" -Property ParentProcessId -CimSession $cimSession).ParentProcessId
+                continue
+            }
+            break
         }
-    }
-    $parent = (Get-Process -Id $PID).Parent
-    for () {
-        if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
-            $parent = (Get-Process -Id $parent.ID).Parent
-            continue
+    } else {
+        $parent = (Get-Process -Id $PID).Parent
+        for () {
+            if ($parent.ProcessName -in 'powershell', 'pwsh', 'winpty-agent', 'cmd', 'zsh', 'bash') {
+                $parent = (Get-Process -Id $parent.ID).Parent
+                continue
+            }
+            break
         }
-        break
     }
     try {
         $terminal = switch ($parent.ProcessName) {
             'explorer' { 'Windows Console' }
+            'Code' { 'Visual Studio Code' }
             default { $PSItem }
         }
     } catch {
@@ -383,7 +401,7 @@ function info_disk {
 # ===== POWERSHELL VERSION =====
 function info_pwsh {
     return @{
-        title   = "PowerShell"
+        title   = "Shell"
         content = "PowerShell v$($PSVersionTable.PSVersion)"
     }
 }
