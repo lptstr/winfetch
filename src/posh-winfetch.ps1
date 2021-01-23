@@ -430,6 +430,7 @@ foreach ($line in $img) {
 # move cursor to top of image and to column 40
 if ($img) {
     Write-Host -NoNewLine "$e[$($img.Length)A$e[40G"
+    $writtenLines = 0
 }
 
 # write info
@@ -444,25 +445,32 @@ foreach ($item in $config) {
         continue
     }
 
-    $output = "$e[1;34m$($info.title)$e[0m"
-
-    if ($info.title -and $info.content) {
-        $output += ": "
+    if ($info -isnot [array]) {
+        $info = @($info)
     }
 
-    $output += "$($info.content)`n"
+    foreach ($line in $info) {
+        $output = "$e[1;34m$($line.title)$e[0m"
 
-    # move cursor to column 40
-    if ($img) {
-        $output += "$e[40G"
+        if ($line.title -and $line.content) {
+            $output += ": "
+        }
+
+        $output += "$($line.content)`n"
+
+        # move cursor to column 40
+        if ($img) {
+            $output += "$e[40G"
+            $writtenLines++
+        }
+
+        Write-Host -NoNewLine $output
     }
-
-    Write-Host -NoNewLine $output
 }
 
 # move cursor back to the bottom
 if ($img) {
-    Write-Host -NoNewLine "$e[$($img.Length - $config.Length)B"
+    Write-Host -NoNewLine "$e[$($img.Length - $writtenLines)B"
 }
 
 # print 2 newlines
