@@ -471,13 +471,13 @@ foreach ($item in $config) {
     }
 
     foreach ($line in $info) {
-        $output = "$e[1;34m$($line.title)$e[0m"
+        $output = "$e[1;34m$($line["title"])$e[0m"
 
-        if ($line.title -and $line.content) {
+        if ($line["title"] -and $line["content"]) {
             $output += ": "
         }
 
-        $output += "$($line.content)`n"
+        $output += "$($line["content"])`n"
 
         # move cursor to column 40
         if ($img) {
