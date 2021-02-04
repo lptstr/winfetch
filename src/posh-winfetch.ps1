@@ -117,6 +117,7 @@ $baseConfig = @(
     "kernel"
     "motherboard"
     "uptime"
+    "resolution"
     "pkgs"
     "pwsh"
     "terminal"
@@ -315,6 +316,21 @@ function info_uptime {
             ({ $PSItem.Minutes -eq 1 }) { '1 minute' }
             ({ $PSItem.Minutes -gt 1 }) { "$($PSItem.Minutes) minutes" }
         }) -join ' '
+    }
+}
+
+
+# ===== RESOLUTION =====
+function info_resolution {
+    Add-Type -AssemblyName System.Windows.Forms
+    $Displays = New-Object System.Collections.Generic.List[System.Object];
+    foreach ($monitor in [System.Windows.Forms.Screen]::AllScreens) {
+        $Displays.Add("$($monitor.Bounds.Size.Width)x$($monitor.Bounds.Size.Height)");
+    }
+
+    return @{
+        title   = "Resolution"
+        content = $Displays -join ' '
     }
 }
 
