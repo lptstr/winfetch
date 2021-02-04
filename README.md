@@ -1,29 +1,31 @@
-<h3 align="center"><img src="https://lptstr.github.io/lptstr-images/proj/winfetch/logo.png" alt="logo" height="100px"></h3>
+<h3 align="center"><img src="./assets/logo-winfetch.png" alt="logo" height="80px"></h3>
 
+<br />
 <p align="center">
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/lptstr/winfetch.svg">
-<img alt="GitHub" src="https://img.shields.io/github/license/lptstr/winfetch.svg">
+<img alt="GitHub license" src="https://img.shields.io/github/license/lptstr/winfetch.svg">
 <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/lptstr/winfetch.svg">
-<a href="https://www.codacy.com/app/lptstr/winfetch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lptstr/winfetch&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/cc3ea20a9c4e4ec8a441e84dd9baa241"/></a>
 </p>
 
+<br />
+<p align="center">
+<img alt="Windows Terminal screenshot" src="assets/wt.png" height="500px">
+</p>
 
-<img src="https://lptstr.github.io/lptstr-images/screenshots/projects/winfetch/computant.png" alt="winfetch" align="right" height="230px" width="350">
+<br />
+Winfetch is a command-line system information utility written in PowerShell 5+. Winfetch displays information about your operating system, software and hardware in an aesthetic and visually pleasing way.
 
-Winfetch is a command-line system information utility written in PowerShell for Windows. Winfetch displays information about your operating system, software and hardware in an way similar to Neofetch and Screenfetch. 
+The overall purpose of Winfetch is to be used in screenshots of your system. Winfetch shows the information other people want to see. There are other tools available for proper system statistic/diagnostics.
 
-Winfetch currently supports Windows 10; Windows 7 and Windows 8.1 have not been tested yet.
-
-While Winfetch does work in the majority of cases, things may break occasionally. Please report all such bugs [here](https://github.com/lptstr/winfetch/issues/new).
+The information by default is displayed alongside your operating system's logo. You can further configure Winfetch to instead use an image, your wallpaper or nothing at all.
 
 <br /><br />
+<p align="center">
+<img alt="Windows Console screenshot" src="assets/conhost.png" height="300px">
+</p>
+<br />
 
-## Why use Winfetch?
-<img src="https://lptstr.github.io/lptstr-images/screenshots/projects/winfetch/computant-hyper.png" alt="winfetch" align="right" height="230px" width="350">
-
-1. **Winfetch is fast.** According to [benchmarks](https://github.com/lptstr/winfetch/wiki/Winfetch-vs-Neofetch) done with Hyperfine, Winfetch is faster than Neofetch running on Git Bash.
-2. **Winfetch isn't bloated.** The whole thing is only 12.5KB and 380 lines of pure PowerShell, counting comments. Compare that to Neofetch, which is about 280KB and 7,500 lines of code.
-3. **No need for the WSL, Cygwin, or MSYS2.** While you need to install a bash emulator (WSL, Git Bash, MSYS2, Cygwin) to run Neofetch, all you need for Winfetch is PowerShell, which is installed by default on most Windows computers.
+According to [benchmarks](https://github.com/lptstr/winfetch/wiki/Winfetch-vs-Neofetch) done with Hyperfine, Winfetch on Windows is faster than Neofetch running on Bash emulators like MSYS (Git Bash) or Cygwin.
 
 
 #### More: \[[Dependencies](https://github.com/lptstr/winfetch/wiki/Dependencies)\] \[[Installation](https://github.com/lptstr/winfetch/wiki/Installation)\] \[[Usage](https://github.com/lptstr/winfetch/wiki/Basic-Usage)\]
