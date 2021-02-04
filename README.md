@@ -1,4 +1,4 @@
-<h3 align="center"><img src="./assets/logo-winfetch.png" alt="logo" height="80px"></h3>
+<h3 align="center"><img alt="logo" src="assets/logo-winfetch.png" width="450px"></h3>
 
 <br />
 <p align="center">
@@ -9,19 +9,19 @@
 
 <br />
 <p align="center">
-<img alt="Windows Terminal screenshot" src="assets/wt.png" height="500px">
+<img alt="Windows Terminal screenshot" src="assets/wt.png" width="600px">
 </p>
-
 <br />
+
 Winfetch is a command-line system information utility written in PowerShell 5+. Winfetch displays information about your operating system, software and hardware in an aesthetic and visually pleasing way.
 
 The overall purpose of Winfetch is to be used in screenshots of your system. Winfetch shows the information other people want to see. There are other tools available for proper system statistic/diagnostics.
 
 The information by default is displayed alongside your operating system's logo. You can further configure Winfetch to instead use an image, your wallpaper or nothing at all.
 
-<br /><br />
+<br />
 <p align="center">
-<img alt="Windows Console screenshot" src="assets/conhost.png" height="300px">
+<img alt="Windows Console screenshot" src="assets/conhost.png" width="500px">
 </p>
 <br />
 
