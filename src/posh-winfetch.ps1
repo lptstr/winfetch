@@ -114,6 +114,7 @@ $baseConfig = @(
     "os"
     "computer"
     "kernel"
+    "motherboard"
     "uptime"
     "pkgs"
     "pwsh"
@@ -122,6 +123,9 @@ $baseConfig = @(
     "gpu"
     "memory"
     "disk"
+    "battery"
+    "local_ip"
+    "public_ip"
     "blank"
     "colorbar"
 )
@@ -242,6 +246,16 @@ function info_os {
         } else {
             ($PSVersionTable.OS).TrimStart('Microsoft ')
         }
+    }
+}
+
+
+# ===== MOTHERBOARD =====
+function info_motherboard {
+    $motherboard = Get-CimInstance Win32_BaseBoard -CimSession $cimSession -Property Manufacturer,Product
+    return @{
+        title = "Motherboard"
+        content = "{0} {1}" -f $motherboard.Manufacturer, $motherboard.Product
     }
 }
 
@@ -415,6 +429,73 @@ function info_pkgs {
     return @{
         title   = "Packages"
         content = $pkgs
+    }
+}
+
+
+# ===== BATTERY =====
+function info_battery {
+    $battery = Get-CimInstance Win32_Battery -CimSession $cimSession -Property BatteryStatus,EstimatedChargeRemaining,EstimatedRunTime,TimeToFullCharge
+
+    if (-not $battery) {
+        return @{
+            title = "Battery"
+            content = "(none)"
+        }
+    }
+
+    $power = Get-CimInstance BatteryStatus -Namespace root\wmi -CimSession $cimSession -Property Charging,PowerOnline
+
+    $status = if ($power.Charging) {
+        "Charging"
+    } elseif ($power.PowerOnline) {
+        "Plugged in"
+    } else {
+        "Discharging"
+    }
+
+    $timeRemaining = if ($power.Charging) {
+        $battery.TimeToFullCharge
+    } else {
+        $battery.EstimatedRunTime
+    }
+
+    # don't show time remaining if windows hasn't properly reported it yet
+    $timeFormatted = if ($timeRemaining -and $timeRemaining -lt 71582788) {
+        $hours = [math]::floor($timeRemaining / 60)
+        $minutes = $timeRemaining % 60
+        ", ${hours}h ${minutes}m"
+    }
+
+    return @{
+        title = "Battery"
+        content = "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
+    }
+}
+
+
+# ===== IP =====
+function info_local_ip {
+    $indexDefault = Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Sort-Object -Property RouteMetric | Select-Object -First 1 | Select-Object -ExpandProperty ifIndex
+    $local_ip = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $indexDefault | Select-Object -ExpandProperty IPAddress
+    return @{
+        title = "Local IP"
+        content = $local_ip
+    }
+}
+
+function info_public_ip {
+    try {
+        $public_ip = (Resolve-DnsName -Name myip.opendns.com -Server resolver1.opendns.com).IPAddress
+    } catch {}
+
+    if (-not $public_ip) {
+        $public_ip = Invoke-RestMethod -Uri https://ifconfig.me/ip
+    }
+
+    return @{
+        title = "Public IP"
+        content = $public_ip
     }
 }
 
