@@ -21,7 +21,7 @@ The information by default is displayed alongside your operating system's logo. 
 
 <br />
 <p align="center">
-<img alt="Windows Console screenshot" src="assets/conhost.png" width="500px">
+<img alt="Windows Console screenshot" src="assets/conhost.png" width="600px">
 </p>
 <br />
 
