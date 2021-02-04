@@ -105,6 +105,7 @@ if ($genconf) {
 
 # ===== VARIABLES =====
 $cimSession = New-CimSession
+$showDisks = @($env:SystemDrive)
 
 
 # ===== CONFIGURATION =====
@@ -387,14 +388,34 @@ function info_memory {
 
 # ===== DISK USAGE =====
 function info_disk {
-    $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DeviceID="C:"' -Property Size,FreeSpace -CimSession $cimSession
-    $total = [math]::floor(($disk.Size / 1gb))
-    $used = [math]::floor((($disk.FreeSpace - $total) / 1gb))
-    $usage = [math]::floor(($used / $total * 100))
-    return @{
-        title   = "Disk (C:)"
-        content = ("{0}GiB / {1}GiB ({2}%)" -f $used,$total,$usage)
+    [System.Collections.ArrayList]$lines = @()
+
+    function to_units($value) {
+        if ($value -gt 1tb) {
+            return "$([math]::round($value / 1tb, 1))T"
+        } else {
+            return "$([math]::floor($value / 1gb))G"
+        }
     }
+
+    $disks = Get-CimInstance -ClassName Win32_LogicalDisk -Property Size,FreeSpace -CimSession $cimSession
+
+    foreach ($diskInfo in $disks) {
+        foreach ($diskLetter in $showDisks) {
+            if ($diskInfo.DeviceID -eq $diskLetter -or $diskLetter -eq "*") {
+                $total = $diskInfo.Size
+                $used = $total - $diskInfo.FreeSpace
+                $usage = [math]::floor(($used / $total * 100))
+                [void]$lines.Add(@{
+                    title   = "Disk ($($diskInfo.DeviceID))"
+                    content = "$(to_units $used) / $(to_units $total) ($usage%)"
+                })
+                break
+            }
+        }
+    }
+
+    return $lines
 }
 
 
@@ -511,6 +532,7 @@ foreach ($line in $img) {
 # move cursor to top of image and to column 40
 if ($img) {
     Write-Host -NoNewLine "$e[$($img.Length)A$e[40G"
+    $writtenLines = 0
 }
 
 # write info
@@ -525,25 +547,32 @@ foreach ($item in $config) {
         continue
     }
 
-    $output = "$e[1;34m$($info.title)$e[0m"
-
-    if ($info.title -and $info.content) {
-        $output += ": "
+    if ($info -isnot [array]) {
+        $info = @($info)
     }
 
-    $output += "$($info.content)`n"
+    foreach ($line in $info) {
+        $output = "$e[1;34m$($line["title"])$e[0m"
 
-    # move cursor to column 40
-    if ($img) {
-        $output += "$e[40G"
+        if ($line["title"] -and $line["content"]) {
+            $output += ": "
+        }
+
+        $output += "$($line["content"])`n"
+
+        # move cursor to column 40
+        if ($img) {
+            $output += "$e[40G"
+            $writtenLines++
+        }
+
+        Write-Host -NoNewLine $output
     }
-
-    Write-Host -NoNewLine $output
 }
 
 # move cursor back to the bottom
 if ($img) {
-    Write-Host -NoNewLine "$e[$($img.Length - $config.Length)B"
+    Write-Host -NoNewLine "$e[$($img.Length - $writtenLines)B"
 }
 
 # print 2 newlines

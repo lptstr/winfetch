@@ -11,6 +11,12 @@
 #     }
 # }
 
+# Configure which disks are shown
+# $ShowDisks = @("C:", "D:")
+# Show all available disks
+# $ShowDisks = @("*")
+
+
 # Remove the '#' from any of the lines in
 # the following to **enable** their output.
 
