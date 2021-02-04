@@ -188,13 +188,13 @@ elseif (-not $noimage -and $image) {
         Write-Host 'ERROR: Specified image or wallpaper does not exist.' -f red
         exit 1
     }
-    $pixels = @((magick convert -thumbnail "${COLUMNS}x" -define txt:compliance=SVG $image txt:-).Split("`n"))
+    $pixels = @((magick convert -thumbnail "${COLUMNS}x" $image txt:-).Split("`n"))
     foreach ($pixel in $pixels) {
-        $coord = [regex]::Match($pixel, "([0-9])+,([0-9])+:").Value.TrimEnd(":") -split ','
-        $col, $row = $coord[0, 1]
+        # ignore comments in output
+        if ($pixel.StartsWith("#")) { continue }
 
-        $rgba = [regex]::Match($pixel, "\(([0-9])+,([0-9])+,([0-9])+,([0-9])+\)").Value.TrimStart("(").TrimEnd(")").Split(",")
-        $r, $g, $b = $rgba[0, 1, 2]
+        $col, $row = [regex]::Match($pixel, "(\d+),(\d+):").Groups[1, 2].Value
+        $r, $g, $b = [regex]::Match($pixel, "\((\d+).*?,(\d+).*?,(\d+).*?,(\d+).*?\)").Groups[1, 2, 3].Value
 
         if (($row % 2) -eq 0) {
             $upper += "${r};${g};${b}"
