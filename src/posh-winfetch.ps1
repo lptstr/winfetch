@@ -360,6 +360,10 @@ function info_terminal {
     try {
         $terminal = switch ($parent.ProcessName) {
             'explorer' { 'Windows Console' }
+            'Console' { 'Console2/Z' }
+            'ConEmuC64' { 'ConEmu' }
+            'WindowsTerminal' { 'Windows Terminal' }
+            'FluentTerminal.SystemTray' { 'Fluent Terminal' }
             'Code' { 'Visual Studio Code' }
             default { $PSItem }
         }
