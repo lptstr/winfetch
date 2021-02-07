@@ -49,6 +49,10 @@
     Download a configuration template. Internet connection required.
 .PARAMETER noimage
     Do not display any image or logo; display information only.
+.PARAMETER legacylogo
+    Use legacy Windows logo.
+.PARAMETER blink
+    Make the logo blink.
 .PARAMETER help
     Display this help message.
 .INPUTS
@@ -63,6 +67,8 @@ param(
     [string][alias('i')]$image,
     [switch][alias('g')]$genconf,
     [switch][alias('n')]$noimage,
+    [switch][alias('l')]$legacylogo,
+    [switch][alias('b')]$blink,
     [switch][alias('h')]$help
 )
 
@@ -106,6 +112,12 @@ if ($genconf) {
 # ===== VARIABLES =====
 $cimSession = New-CimSession
 $showDisks = @($env:SystemDrive)
+$t = if ($blink)
+{
+    "5"
+} elseif (-not $blink) {
+    "1"
+}
 
 
 # ===== CONFIGURATION =====
@@ -147,26 +159,46 @@ if ($config.GetType() -eq [string]) {
 
 
 # ===== IMAGE =====
-$img = if (-not $image -and -not $noimage) {
+$img = if (-not $image -and -not $noimage -and $legacylogo) {
     @(
-        "${e}[1;34m                    ....,,:;+ccllll${e}[0m"
-        "${e}[1;34m      ...,,+:;  cllllllllllllllllll${e}[0m"
-        "${e}[1;34m,cclllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34m                                   ${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34m``'ccllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[1;34m      ``' \\*::  :ccllllllllllllllll${e}[0m"
-        "${e}[1;34m                       ````````''*::cll${e}[0m"
-        "${e}[1;34m                                 ````${e}[0m"
+        "${e}[${t};31m        ,.=:!!t3Z3z.,               ${e}[0m"
+        "${e}[${t};31m       :tt:::tt333EE3               ${e}[0m"
+        "${e}[${t};31m       Et:::ztt33EEE  ${e}[32m@Ee.,      ..,${e}[0m"
+        "${e}[${t};31m      ;tt:::tt333EE7 ${e}[32m;EEEEEEttttt33#${e}[0m"
+        "${e}[${t};31m     :Et:::zt333EEQ. ${e}[32mSEEEEEttttt33QL${e}[0m"
+        "${e}[${t};31m     it::::tt333EEF ${e}[32m@EEEEEEttttt33F ${e}[0m"
+        "${e}[${t};31m    ;3=*^``````'*4EEV ${e}[32m:EEEEEEttttt33@. ${e}[0m"
+        "${e}[${t};34m    ,.=::::it=., ${e}[31m`` ${e}[32m@EEEEEEtttz33QF  ${e}[0m"
+        "${e}[${t};34m   ;::::::::zt33)   ${e}[32m'4EEEtttji3P*   ${e}[0m"
+        "${e}[${t};34m  :t::::::::tt33 ${e}[33m:Z3z..  ${e}[32m```` ${e}[33m,..g.   ${e}[0m"
+        "${e}[${t};34m  i::::::::zt33F ${e}[33mAEEEtttt::::ztF    ${e}[0m"
+        "${e}[${t};34m ;:::::::::t33V ${e}[33m;EEEttttt::::t3     ${e}[0m"
+        "${e}[${t};34m E::::::::zt33L ${e}[33m@EEEtttt::::z3F     ${e}[0m"
+        "${e}[${t};34m{3=*^``````'*4E3) ${e}[33m;EEEtttt:::::tZ``     ${e}[0m"
+        "${e}[${t};34m            `` ${e}[33m:EEEEtttt::::z7       ${e}[0m"
+        "${e}[${t};33m                'VEzjt:;;z>*``       ${e}[0m"
+    )
+}
+elseif (-not $image -and -not $noimage -and -not $legacylogo) {
+    @(
+        "${e}[${t};34m                    ....,,:;+ccllll${e}[0m"
+        "${e}[${t};34m      ...,,+:;  cllllllllllllllllll${e}[0m"
+        "${e}[${t};34m,cclllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34m                                   ${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34m``'ccllllllllll  lllllllllllllllllll${e}[0m"
+        "${e}[${t};34m      ``' \\*::  :ccllllllllllllllll${e}[0m"
+        "${e}[${t};34m                       ````````''*::cll${e}[0m"
+        "${e}[${t};34m                                 ````${e}[0m"
     )
 }
 elseif (-not $noimage -and $image) {
