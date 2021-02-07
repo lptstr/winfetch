@@ -112,12 +112,7 @@ if ($genconf) {
 # ===== VARIABLES =====
 $cimSession = New-CimSession
 $showDisks = @($env:SystemDrive)
-$t = if ($blink)
-{
-    "5"
-} elseif (-not $blink) {
-    "1"
-}
+$t = if ($blink) { "5" } else { "1" }
 
 
 # ===== CONFIGURATION =====
@@ -159,97 +154,94 @@ if ($config.GetType() -eq [string]) {
 
 
 # ===== IMAGE =====
-$img = if (-not $image -and -not $noimage -and $legacylogo) {
-    @(
-        "${e}[${t};31m        ,.=:!!t3Z3z.,               ${e}[0m"
-        "${e}[${t};31m       :tt:::tt333EE3               ${e}[0m"
-        "${e}[${t};31m       Et:::ztt33EEE  ${e}[32m@Ee.,      ..,${e}[0m"
-        "${e}[${t};31m      ;tt:::tt333EE7 ${e}[32m;EEEEEEttttt33#${e}[0m"
-        "${e}[${t};31m     :Et:::zt333EEQ. ${e}[32mSEEEEEttttt33QL${e}[0m"
-        "${e}[${t};31m     it::::tt333EEF ${e}[32m@EEEEEEttttt33F ${e}[0m"
-        "${e}[${t};31m    ;3=*^``````'*4EEV ${e}[32m:EEEEEEttttt33@. ${e}[0m"
-        "${e}[${t};34m    ,.=::::it=., ${e}[31m`` ${e}[32m@EEEEEEtttz33QF  ${e}[0m"
-        "${e}[${t};34m   ;::::::::zt33)   ${e}[32m'4EEEtttji3P*   ${e}[0m"
-        "${e}[${t};34m  :t::::::::tt33 ${e}[33m:Z3z..  ${e}[32m```` ${e}[33m,..g.   ${e}[0m"
-        "${e}[${t};34m  i::::::::zt33F ${e}[33mAEEEtttt::::ztF    ${e}[0m"
-        "${e}[${t};34m ;:::::::::t33V ${e}[33m;EEEttttt::::t3     ${e}[0m"
-        "${e}[${t};34m E::::::::zt33L ${e}[33m@EEEtttt::::z3F     ${e}[0m"
-        "${e}[${t};34m{3=*^``````'*4E3) ${e}[33m;EEEtttt:::::tZ``     ${e}[0m"
-        "${e}[${t};34m            `` ${e}[33m:EEEEtttt::::z7       ${e}[0m"
-        "${e}[${t};33m                'VEzjt:;;z>*``       ${e}[0m"
-    )
-}
-elseif (-not $image -and -not $noimage -and -not $legacylogo) {
-    @(
-        "${e}[${t};34m                    ....,,:;+ccllll${e}[0m"
-        "${e}[${t};34m      ...,,+:;  cllllllllllllllllll${e}[0m"
-        "${e}[${t};34m,cclllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34m                                   ${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34mllllllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34m``'ccllllllllll  lllllllllllllllllll${e}[0m"
-        "${e}[${t};34m      ``' \\*::  :ccllllllllllllllll${e}[0m"
-        "${e}[${t};34m                       ````````''*::cll${e}[0m"
-        "${e}[${t};34m                                 ````${e}[0m"
-    )
-}
-elseif (-not $noimage -and $image) {
-    if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
-        Write-Host 'ERROR: Imagemagick must be installed to print custom images.' -f red
-        Write-Host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
-        exit 1
-    }
-
-    $COLUMNS = 35
-    $CURR_ROW = ""
-    $CHAR = [Text.Encoding]::UTF8.GetString(@(226, 150, 128)) # 226,150,136
-    $upper, $lower = @(), @()
-
-    if ($image -eq 'wallpaper') {
-        $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
-    }
-    if (-not (Test-Path -path $image)) {
-        Write-Host 'ERROR: Specified image or wallpaper does not exist.' -f red
-        exit 1
-    }
-    $pixels = @((magick convert -thumbnail "${COLUMNS}x" $image txt:-).Split("`n"))
-    foreach ($pixel in $pixels) {
-        # ignore comments in output
-        if ($pixel.StartsWith("#")) { continue }
-
-        $col, $row = [regex]::Match($pixel, "(\d+),(\d+):").Groups[1, 2].Value
-        $r, $g, $b = [regex]::Match($pixel, "\((\d+).*?,(\d+).*?,(\d+).*?,(\d+).*?\)").Groups[1, 2, 3].Value
-
-        if (($row % 2) -eq 0) {
-            $upper += "${r};${g};${b}"
-        } else {
-            $lower += "${r};${g};${b}"
+$img = if (-not $noimage) {
+    if ($image) {
+        if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
+            Write-Host 'ERROR: Imagemagick must be installed to print custom images.' -f red
+            Write-Host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
+            exit 1
         }
 
-        if (($row % 2) -eq 1 -and $col -eq ($COLUMNS - 1)) {
-            $i = 0
-            while ($i -lt $COLUMNS) {
-                $CURR_ROW += "${e}[38;2;$($upper[$i]);48;2;$($lower[$i])m${CHAR}"
-                $i++
+        $COLUMNS = 35
+        $CURR_ROW = ""
+        $CHAR = [Text.Encoding]::UTF8.GetString(@(226, 150, 128)) # 226,150,136
+        $upper, $lower = @(), @()
+
+        if ($image -eq 'wallpaper') {
+            $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
+        }
+        if (-not (Test-Path -path $image)) {
+            Write-Host 'ERROR: Specified image or wallpaper does not exist.' -f red
+            exit 1
+        }
+        $pixels = @((magick convert -thumbnail "${COLUMNS}x" $image txt:-).Split("`n"))
+        foreach ($pixel in $pixels) {
+            # ignore comments in output
+            if ($pixel.StartsWith("#")) { continue }
+
+            $col, $row = [regex]::Match($pixel, "(\d+),(\d+):").Groups[1, 2].Value
+            $r, $g, $b = [regex]::Match($pixel, "\((\d+).*?,(\d+).*?,(\d+).*?,(\d+).*?\)").Groups[1, 2, 3].Value
+
+            if (($row % 2) -eq 0) {
+                $upper += "${r};${g};${b}"
+            } else {
+                $lower += "${r};${g};${b}"
             }
-            "${CURR_ROW}${e}[0m"
 
-            $CURR_ROW = ""
-            $upper = @()
-            $lower = @()
+            if (($row % 2) -eq 1 -and $col -eq ($COLUMNS - 1)) {
+                $i = 0
+                while ($i -lt $COLUMNS) {
+                    $CURR_ROW += "${e}[38;2;$($upper[$i]);48;2;$($lower[$i])m${CHAR}"
+                    $i++
+                }
+                "${CURR_ROW}${e}[0m"
+
+                $CURR_ROW = ""
+                $upper = @()
+                $lower = @()
+            }
         }
+    } elseif ($legacylogo) {
+        @(
+            "${e}[${t};31m        ,.=:!!t3Z3z.,               "
+            "${e}[${t};31m       :tt:::tt333EE3               "
+            "${e}[${t};31m       Et:::ztt33EEE  ${e}[32m@Ee.,      ..,"
+            "${e}[${t};31m      ;tt:::tt333EE7 ${e}[32m;EEEEEEttttt33#"
+            "${e}[${t};31m     :Et:::zt333EEQ. ${e}[32mSEEEEEttttt33QL"
+            "${e}[${t};31m     it::::tt333EEF ${e}[32m@EEEEEEttttt33F "
+            "${e}[${t};31m    ;3=*^``````'*4EEV ${e}[32m:EEEEEEttttt33@. "
+            "${e}[${t};34m    ,.=::::it=., ${e}[31m`` ${e}[32m@EEEEEEtttz33QF  "
+            "${e}[${t};34m   ;::::::::zt33)   ${e}[32m'4EEEtttji3P*   "
+            "${e}[${t};34m  :t::::::::tt33 ${e}[33m:Z3z..  ${e}[32m```` ${e}[33m,..g.   "
+            "${e}[${t};34m  i::::::::zt33F ${e}[33mAEEEtttt::::ztF    "
+            "${e}[${t};34m ;:::::::::t33V ${e}[33m;EEEttttt::::t3     "
+            "${e}[${t};34m E::::::::zt33L ${e}[33m@EEEtttt::::z3F     "
+            "${e}[${t};34m{3=*^``````'*4E3) ${e}[33m;EEEtttt:::::tZ``     "
+            "${e}[${t};34m            `` ${e}[33m:EEEEtttt::::z7       "
+            "${e}[${t};33m                'VEzjt:;;z>*``       "
+        )
+    } else {
+        @(
+            "${e}[${t};34m                    ....,,:;+ccllll"
+            "${e}[${t};34m      ...,,+:;  cllllllllllllllllll"
+            "${e}[${t};34m,cclllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34m                                   "
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34mllllllllllllll  lllllllllllllllllll"
+            "${e}[${t};34m``'ccllllllllll  lllllllllllllllllll"
+            "${e}[${t};34m      ``' \\*::  :ccllllllllllllllll"
+            "${e}[${t};34m                       ````````''*::cll"
+            "${e}[${t};34m                                 ````"
+        )
     }
-}
-else {
-    @()
 }
 
 
