@@ -1,4 +1,4 @@
-<h3 align="center"><img alt="logo" src="assets/logo-winfetch.png" width="450px"></h3>
+<h3 align="center"><img alt="logo" src="lib/logo-winfetch.png" width="450px"></h3>
 
 <br />
 <p align="center">
@@ -9,7 +9,7 @@
 
 <br />
 <p align="center">
-<img alt="Windows Terminal screenshot" src="assets/wt.png" width="600px">
+<img alt="Windows Terminal screenshot" src="lib/wt.png" width="600px">
 </p>
 <br />
 
@@ -21,7 +21,7 @@ The information by default is displayed alongside your operating system's logo. 
 
 <br />
 <p align="center">
-<img alt="Windows Console screenshot" src="assets/conhost.png" width="600px">
+<img alt="Windows Console screenshot" src="lib/conhost.png" width="600px">
 </p>
 <br />
 
