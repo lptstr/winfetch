@@ -148,7 +148,7 @@ if ((Get-Item -Path $configPath).Length -gt 0) {
 # convert old config style
 if ($config.GetType() -eq [string]) {
     $oldConfig = $config.ToLower()
-    $config = $baseConfig | Where-Object { $oldConfig.Contains($_) }
+    $config = $baseConfig | Where-Object { $oldConfig.Contains($PSItem) }
     $config += @("blank", "colorbar")
 }
 
@@ -387,7 +387,7 @@ function info_terminal {
     }
     try {
         $terminal = switch ($parent.ProcessName) {
-            'explorer' { 'Windows Console' }
+            { $PSItem -in 'explorer', 'conhost' } { 'Windows Console' }
             'Console' { 'Console2/Z' }
             'ConEmuC64' { 'ConEmu' }
             'WindowsTerminal' { 'Windows Terminal' }
