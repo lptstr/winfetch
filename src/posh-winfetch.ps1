@@ -135,6 +135,7 @@ $baseConfig = @(
     "memory"
     "disk"
     "battery"
+    "locale"
     "local_ip"
     "public_ip"
     "blank"
@@ -564,6 +565,15 @@ function info_battery {
     return @{
         title = "Battery"
         content = "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
+    }
+}
+
+
+# ===== LOCALE =====
+function info_locale {
+    return @{
+        title = "Locale"
+        content = "$((Get-WinHomeLocation).HomeLocation) - $((Get-WinUserLanguageList)[0].LocalizedName)"
     }
 }
 

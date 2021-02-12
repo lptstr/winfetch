@@ -45,10 +45,11 @@
     "terminal"
     "cpu"
     "gpu"
-    "process"
+    # "process" # takes some time
     "memory"
     "disk"
     # "battery"
+    # "locale"
     # "local_ip"
     # "public_ip"
     "blank"
