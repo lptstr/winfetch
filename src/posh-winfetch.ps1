@@ -131,6 +131,7 @@ $baseConfig = @(
     "terminal"
     "cpu"
     "gpu"
+    "process"
     "memory"
     "disk"
     "battery"
@@ -419,6 +420,15 @@ function info_gpu {
     return @{
         title   = "GPU"
         content = (Get-CimInstance -ClassName Win32_VideoController -Property Name -CimSession $cimSession).Name
+    }
+}
+
+
+# ===== PROCESS =====
+function info_process {
+    return @{
+        title   = "Processes"
+        content = "$((Get-Process).Count) ($((Get-CimInstance -ClassName Win32_Processor -Property LoadPercentage -CimSession $cimSession).LoadPercentage)%)"
     }
 }
 

@@ -45,6 +45,7 @@
     "terminal"
     "cpu"
     "gpu"
+    "process"
     "memory"
     "disk"
     # "battery"
