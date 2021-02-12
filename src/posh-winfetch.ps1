@@ -129,6 +129,7 @@ $baseConfig = @(
     "pkgs"
     "pwsh"
     "terminal"
+    "theme"
     "cpu"
     "gpu"
     "process"
@@ -405,6 +406,18 @@ function info_terminal {
     return @{
         title   = "Terminal"
         content = $terminal
+    }
+}
+
+
+# ===== THEME =====
+function info_theme {
+    $themeinfo = Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize' -Name SystemUsesLightTheme, AppsUseLightTheme
+    $systheme = if ($themeinfo.SystemUsesLightTheme) { "Light" } else { "Dark" }
+    $apptheme = if ($themeinfo.AppsUseLightTheme) { "Light" } else { "Dark" }
+    return @{
+        title = "Theme"
+        content = "System - $systheme, Apps - $apptheme"
     }
 }
 

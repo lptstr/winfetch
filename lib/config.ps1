@@ -43,6 +43,7 @@
     "pwsh"
     "resolution"
     "terminal"
+    # "theme"
     "cpu"
     "gpu"
     # "process" # takes some time
