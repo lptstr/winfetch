@@ -442,7 +442,7 @@ function info_gpu {
 function info_process {
     return @{
         title   = "Processes"
-        content = "$((Get-Process).Count) ($((Get-CimInstance -ClassName Win32_Processor -Property LoadPercentage -CimSession $cimSession).LoadPercentage)%)"
+        content = "$((Get-Process).Count) ($((Get-CimInstance -ClassName Win32_Processor -Property LoadPercentage -CimSession $cimSession).LoadPercentage)% load)"
     }
 }
 
@@ -584,9 +584,16 @@ function info_battery {
 
 # ===== LOCALE =====
 function info_locale {
+    # `Get-WinUserLanguageList` has a regression bug on PowerShell v7.1+
+    # https://github.com/PowerShell/PowerShellModuleCoverage/issues/18
+    # Fallback to `Get-WinSystemLocale` (which might be slightly inaccurate) for such cases
     return @{
         title = "Locale"
-        content = "$((Get-WinHomeLocation).HomeLocation) - $((Get-WinUserLanguageList)[0].LocalizedName)"
+        content = if ($PSVersionTable.PSVersion -like "7.1.*") {
+            "$((Get-WinHomeLocation).HomeLocation) - $((Get-WinSystemLocale).DisplayName)"
+        } else {
+            "$((Get-WinHomeLocation).HomeLocation) - $((Get-WinUserLanguageList)[0].LocalizedName)"
+        }
     }
 }
 
