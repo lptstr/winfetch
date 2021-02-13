@@ -1,8 +1,9 @@
 #!/usr/bin/env pwsh
 #requires -version 5
 
-# The MIT License (MIT)
-# Copyright (c) 2019 Kied Llaentenn and contributers
+# MIT License
+#
+# Copyright (c) 2021 Kied Llaentenn and contributers
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +24,7 @@
 # SOFTWARE.
 
 <#PSScriptInfo
-.VERSION 1.2.1
+.VERSION 2.0.0
 .GUID 1c26142a-da43-4125-9d70-97555cbb1752
 .DESCRIPTION Winfetch is a command-line system information utility for Windows written in PowerShell.
 .AUTHOR lptstr
