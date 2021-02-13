@@ -9,6 +9,9 @@
 # Make the logo blink
 # $blink = $true
 
+# Show percentages in a cool bar style
+# $percentagebar = $true
+
 # Add a custom info line
 # function info_custom_time {
 #     return @{
@@ -46,7 +49,7 @@
     # "theme"
     "cpu"
     "gpu"
-    # "process" # takes some time
+    # "cpu_usage" # takes some time
     "memory"
     "disk"
     # "battery"

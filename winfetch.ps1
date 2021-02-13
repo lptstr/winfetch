@@ -36,7 +36,7 @@
 .ICONURI
 .EXTERNALMODULEDEPENDENCIES
 .REQUIREDSCRIPTS
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES New-PercentageBar
 .RELEASENOTES
 #>
 <#
@@ -54,6 +54,8 @@
     Use legacy Windows logo.
 .PARAMETER blink
     Make the logo blink.
+.PARAMETER percentagebar
+    Show percentages in a cool bar style.
 .PARAMETER help
     Display this help message.
 .INPUTS
@@ -70,6 +72,7 @@ param(
     [switch][alias('n')]$noimage,
     [switch][alias('l')]$legacylogo,
     [switch][alias('b')]$blink,
+    [switch][alias('p')]$percentagebar,
     [switch][alias('h')]$help
 )
 
@@ -85,6 +88,13 @@ $defaultconfig = 'https://raw.githubusercontent.com/lptstr/winfetch/master/lib/c
 # ensure configuration directory exists
 if (-not (Test-Path -Path $configPath)) {
     [void](New-Item -Path $configPath -Force)
+}
+
+# ensure New-PercentageBar script is installed, if $percentagebar parameter is enabled
+if ($percentagebar -and -not (Get-Command -Name New-PercentageBar -ErrorAction Ignore)) {
+    Write-Host 'WARN: New-PercentageBar script must be installed to print cool percentage bars.' -f red
+    Write-Host 'HINT: You can install it with `Install-Script New-PercentageBar`.' -f yellow
+    $percentagebar = $false
 }
 
 # ===== DISPLAY HELP =====
@@ -439,11 +449,17 @@ function info_gpu {
 }
 
 
-# ===== PROCESS =====
-function info_process {
+# ===== CPU USAGE =====
+function info_cpu_usage {
+    $loadpercent = (Get-CimInstance -ClassName Win32_Processor -Property LoadPercentage -CimSession $cimSession).LoadPercentage
+    $proccount = (Get-Process).Count
     return @{
-        title   = "Processes"
-        content = "$((Get-Process).Count) ($((Get-CimInstance -ClassName Win32_Processor -Property LoadPercentage -CimSession $cimSession).LoadPercentage)% load)"
+        title   = "CPU Usage"
+        content = if($percentagebar) {
+            "$(New-PercentageBar -Value $loadpercent -Length 10 -MaxValue 100 -NoPercent) ($proccount processes)"
+        } else {
+            "$loadpercent% ($proccount processes)"
+        }
     }
 }
 
@@ -453,9 +469,14 @@ function info_memory {
     $m = Get-CimInstance -ClassName Win32_OperatingSystem -Property TotalVisibleMemorySize,FreePhysicalMemory -CimSession $cimSession
     $total = $m.TotalVisibleMemorySize / 1mb
     $used = ($m.TotalVisibleMemorySize - $m.FreePhysicalMemory) / 1mb
+    $usage = [math]::floor(($used / $total * 100))
     return @{
         title   = "Memory"
-        content = ("{0:f1} GiB / {1:f1} GiB" -f $used,$total)
+        content = if($percentagebar) {
+            "   $(New-PercentageBar -Value $usage -Length 10 -MaxValue 100 -NoPercent) {0:f1} GiB" -f $used
+        } else {
+            "{0:f1} GiB / {1:f1} GiB ({2:f1}%)" -f $used,$total,[string]$usage
+        }
     }
 }
 
@@ -466,9 +487,9 @@ function info_disk {
 
     function to_units($value) {
         if ($value -gt 1tb) {
-            return "$([math]::round($value / 1tb, 1))T"
+            return "$([math]::round($value / 1tb, 1)) TiB"
         } else {
-            return "$([math]::floor($value / 1gb))G"
+            return "$([math]::floor($value / 1gb)) GiB"
         }
     }
 
@@ -482,7 +503,11 @@ function info_disk {
                 $usage = [math]::floor(($used / $total * 100))
                 [void]$lines.Add(@{
                     title   = "Disk ($($diskInfo.DeviceID))"
-                    content = "$(to_units $used) / $(to_units $total) ($usage%)"
+                    content = if($percentagebar) {
+                        "$(New-PercentageBar -Value $usage -Length 10 -MaxValue 100 -NoPercent) $(to_units $used)"
+                    } else {
+                        "$(to_units $used) / $(to_units $total) ($usage%)"
+                    }
                 })
                 break
             }
@@ -578,7 +603,11 @@ function info_battery {
 
     return @{
         title = "Battery"
-        content = "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
+        content = if($percentagebar) {
+            "  $(New-PercentageBar -Value $battery.EstimatedChargeRemaining -Length 10 -MaxValue 100 -NoPercent) ($status$timeFormatted)"
+        } else {
+            "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
+        }
     }
 }
 
