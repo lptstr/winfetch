@@ -624,18 +624,19 @@ function info_public_ip {
     }
 }
 
+$finaloutput = ""
 
 # reset terminal sequences and display a newline
-Write-Host "$e[0m"
+$finaloutput += "$e[0m" + [Environment]::newline
 
 # write logo
 foreach ($line in $img) {
-    Write-Host " $line"
+    $finaloutput += " $line" + [Environment]::newline
 }
 
 # move cursor to top of image and to column 40
 if ($img) {
-    Write-Host -NoNewLine "$e[$($img.Length)A$e[40G"
+    $finaloutput += "$e[$($img.Length)A$e[40G"
     $writtenLines = 0
 }
 
@@ -670,17 +671,19 @@ foreach ($item in $config) {
             $writtenLines++
         }
 
-        Write-Host -NoNewLine $output
+        $finaloutput += $output
     }
 }
 
 # move cursor back to the bottom
 if ($img) {
-    Write-Host -NoNewLine "$e[$($img.Length - $writtenLines)B"
+    $finaloutput += "$e[$($img.Length - $writtenLines)B"
 }
 
 # print 2 newlines
-Write-Host "`n"
+$finaloutput += [Environment]::newline
+
+return $finaloutput
 
 #  ___ ___  ___
 # | __/ _ \| __|
