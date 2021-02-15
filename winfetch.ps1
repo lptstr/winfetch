@@ -54,6 +54,8 @@
     Use legacy Windows logo.
 .PARAMETER blink
     Make the logo blink.
+.PARAMETER stripansi
+    Output without any text effects or colors.
 .PARAMETER help
     Display this help message.
 .INPUTS
@@ -70,10 +72,12 @@ param(
     [switch][alias('n')]$noimage,
     [switch][alias('l')]$legacylogo,
     [switch][alias('b')]$blink,
+    [switch][alias('s')]$stripansi,
     [switch][alias('h')]$help
 )
 
 $e = [char]0x1B
+$ansiRegex = '[\u001B\u009B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))'
 
 $is_pscore = $PSVersionTable.PSEdition.ToString() -eq 'Core'
 
@@ -682,6 +686,10 @@ if ($img) {
 
 # print 2 newlines
 $finaloutput += [Environment]::newline
+
+if ($stripansi) {
+    return $finaloutput -replace $ansiRegex, ''
+}
 
 return $finaloutput
 
