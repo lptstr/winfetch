@@ -54,6 +54,8 @@
     Use legacy Windows logo.
 .PARAMETER blink
     Make the logo blink.
+.PARAMETER stripansi
+    Output without any text effects or colors.
 .PARAMETER help
     Display this help message.
 .INPUTS
@@ -70,10 +72,12 @@ param(
     [switch][alias('n')]$noimage,
     [switch][alias('l')]$legacylogo,
     [switch][alias('b')]$blink,
+    [switch][alias('s')]$stripansi,
     [switch][alias('h')]$help
 )
 
 $e = [char]0x1B
+$ansiRegex = '[\u001B\u009B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~]))'
 
 $is_pscore = $PSVersionTable.PSEdition.ToString() -eq 'Core'
 
@@ -624,18 +628,19 @@ function info_public_ip {
     }
 }
 
+$finaloutput = ""
 
 # reset terminal sequences and display a newline
-Write-Host "$e[0m"
+$finaloutput += "$e[0m" + [Environment]::newline
 
 # write logo
 foreach ($line in $img) {
-    Write-Host " $line"
+    $finaloutput += " $line" + [Environment]::newline
 }
 
 # move cursor to top of image and to column 40
 if ($img) {
-    Write-Host -NoNewLine "$e[$($img.Length)A$e[40G"
+    $finaloutput += "$e[$($img.Length)A$e[40G"
     $writtenLines = 0
 }
 
@@ -670,17 +675,23 @@ foreach ($item in $config) {
             $writtenLines++
         }
 
-        Write-Host -NoNewLine $output
+        $finaloutput += $output
     }
 }
 
 # move cursor back to the bottom
 if ($img) {
-    Write-Host -NoNewLine "$e[$($img.Length - $writtenLines)B"
+    $finaloutput += "$e[$($img.Length - $writtenLines)B"
 }
 
 # print 2 newlines
-Write-Host "`n"
+$finaloutput += [Environment]::newline
+
+if ($stripansi) {
+    return $finaloutput -replace $ansiRegex, ''
+}
+
+return $finaloutput
 
 #  ___ ___  ___
 # | __/ _ \| __|
