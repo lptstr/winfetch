@@ -36,7 +36,7 @@
 .ICONURI
 .EXTERNALMODULEDEPENDENCIES
 .REQUIREDSCRIPTS
-.EXTERNALSCRIPTDEPENDENCIES New-PercentageBar
+.EXTERNALSCRIPTDEPENDENCIES
 .RELEASENOTES
 #>
 <#
@@ -94,11 +94,23 @@ if (-not (Test-Path -Path $configPath)) {
     [void](New-Item -Path $configPath -Force)
 }
 
-# ensure New-PercentageBar script is installed, if $percentagebar parameter is enabled
-if ($percentagebar -and -not (Get-Command -Name New-PercentageBar -ErrorAction Ignore)) {
-    Write-Host 'WARN: New-PercentageBar script must be installed to print cool percentage bars.' -f red
-    Write-Host 'HINT: You can install it with `Install-Script New-PercentageBar`.' -f yellow
-    $percentagebar = $false
+# function to generate percentage bars
+function getpercentbar {
+    param ([Parameter(Mandatory)][ValidateRange(0, 100)][int]$Percent)
+
+    $x = [char]9632
+    $Bar = $null
+
+    $Bar += "$e[97m[ $e[0m"
+    for ($i = 1; $i -le ($BarValue = ([Math]::Round($Percent / 10))); $i++) {
+        if ($i -le 6) { $Bar += "$e[32m$x$e[0m" }
+        elseif ($i -le 8) { $Bar += "$e[93m$x$e[0m" }
+        else { $Bar += "$e[91m$x$e[0m" }
+    }
+    for ($i = 1; $i -le (10 - $BarValue); $i++) { $Bar += "$e[97m-$e[0m" }
+    $Bar += "$e[97m ]$e[0m"
+
+    return $Bar
 }
 
 # ===== DISPLAY HELP =====
@@ -460,7 +472,7 @@ function info_cpu_usage {
     return @{
         title   = "CPU Usage"
         content = if($percentagebar) {
-            "$(New-PercentageBar -Value $loadpercent -Length 10 -MaxValue 100 -NoPercent) ($proccount processes)"
+            "$(getpercentbar $loadpercent) ($proccount processes)"
         } else {
             "$loadpercent% ($proccount processes)"
         }
@@ -477,7 +489,7 @@ function info_memory {
     return @{
         title   = "Memory"
         content = if($percentagebar) {
-            "   $(New-PercentageBar -Value $usage -Length 10 -MaxValue 100 -NoPercent) {0:f1} GiB" -f $used
+            "   $(getpercentbar $usage) {0:f1} GiB" -f $used
         } else {
             "{0:f1} GiB / {1:f1} GiB ({2:f1}%)" -f $used,$total,[string]$usage
         }
@@ -508,7 +520,7 @@ function info_disk {
                 [void]$lines.Add(@{
                     title   = "Disk ($($diskInfo.DeviceID))"
                     content = if($percentagebar) {
-                        "$(New-PercentageBar -Value $usage -Length 10 -MaxValue 100 -NoPercent) $(to_units $used)"
+                        "$(getpercentbar $usage) $(to_units $used)"
                     } else {
                         "$(to_units $used) / $(to_units $total) ($usage%)"
                     }
@@ -608,7 +620,7 @@ function info_battery {
     return @{
         title = "Battery"
         content = if($percentagebar) {
-            "  $(New-PercentageBar -Value $battery.EstimatedChargeRemaining -Length 10 -MaxValue 100 -NoPercent) ($status$timeFormatted)"
+            "  $(getpercentbar $battery.EstimatedChargeRemaining) ($status$timeFormatted)"
         } else {
             "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
         }
