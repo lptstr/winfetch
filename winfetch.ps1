@@ -694,8 +694,9 @@ foreach ($item in $config) {
 
 # move cursor back to the bottom and print 2 newlines
 if (-not $stripansi) {
-    if ($img) {
-        Write-Output "$e[$( $img.Length - $writtenLines )B"
+    $diff = $img.Length - $writtenLines
+    if ($img -and $diff -gt 0) {
+        Write-Output "$e[${diff}B"
     } else {
         Write-Output ""
     }
