@@ -60,6 +60,10 @@
     Output without any text effects or colors.
 .PARAMETER help
     Display this help message.
+.PARAMETER showdisks
+    Configure which disks are shown, use '-showdisks *' to show all.
+.PARAMETER showpkgs
+    Configure which package managers are shown, e.g. '-showpkgs scoop,choco'.
 .INPUTS
     System.String
 .OUTPUTS
@@ -76,7 +80,9 @@ param(
     [switch][alias('l')]$legacylogo,
     [switch][alias('b')]$blink,
     [switch][alias('s')]$stripansi,
-    [switch][alias('h')]$help
+    [switch][alias('h')]$help,
+    [array]$showdisks = @($env:SystemDrive),
+    [array]$showpkgs = @("scoop", "choco")
 )
 
 $e = [char]0x1B
@@ -125,8 +131,6 @@ if ($genconf) {
 
 # ===== VARIABLES =====
 $cimSession = New-CimSession
-$showDisks = @($env:SystemDrive)
-$showPkgs = @("scoop", "choco")
 $t = if ($blink) { "5" } else { "1" }
 
 
