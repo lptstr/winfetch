@@ -151,8 +151,15 @@ $baseConfig = @(
 
 if ((Get-Item -Path $configPath).Length -gt 0) {
     $config = . $configPath
-} else {
+}
+
+if (-not $config) {
     $config = $baseConfig
+}
+
+# prevent config from overriding specified parameters
+foreach ($param in $PSBoundParameters.Keys) {
+    Set-Variable $param $PSBoundParameters[$param]
 }
 
 # convert old config style
