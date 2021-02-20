@@ -49,6 +49,8 @@
     Display a pixelated image instead of the usual logo. Imagemagick required.
 .PARAMETER genconf
     Download a configuration template. Internet connection required.
+.PARAMETER configpath
+    Specify a path to a custom config file.
 .PARAMETER noimage
     Do not display any image or logo; display information only.
 .PARAMETER legacylogo
@@ -59,6 +61,10 @@
     Output without any text effects or colors.
 .PARAMETER help
     Display this help message.
+.PARAMETER showdisks
+    Configure which disks are shown, use '-showdisks *' to show all.
+.PARAMETER showpkgs
+    Configure which package managers are shown, e.g. '-showpkgs scoop,choco'.
 .INPUTS
     System.String
 .OUTPUTS
@@ -70,11 +76,14 @@
 param(
     [string][alias('i')]$image,
     [switch][alias('g')]$genconf,
+    [string][alias('c')]$configpath,
     [switch][alias('n')]$noimage,
     [switch][alias('l')]$legacylogo,
     [switch][alias('b')]$blink,
     [switch][alias('s')]$stripansi,
-    [switch][alias('h')]$help
+    [switch][alias('h')]$help,
+    [array]$showdisks = @($env:SystemDrive),
+    [array]$showpkgs = @("scoop", "choco")
 )
 
 $e = [char]0x1B
@@ -82,8 +91,14 @@ $ansiRegex = '[\u001B\u009B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=
 
 $is_pscore = $PSVersionTable.PSEdition.ToString() -eq 'Core'
 
-$configdir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
-$configPath = "${configdir}/winfetch/config.ps1"
+if (-not $configPath) {
+    if ($env:WINFETCH_CONFIG_PATH) {
+        $configPath = $env:WINFETCH_CONFIG_PATH
+    } else {
+        $configDir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
+        $configPath = "${configDir}/winfetch/config.ps1"
+    }
+}
 
 $defaultconfig = 'https://raw.githubusercontent.com/lptstr/winfetch/master/lib/config.ps1'
 
@@ -117,8 +132,6 @@ if ($genconf) {
 
 # ===== VARIABLES =====
 $cimSession = New-CimSession
-$showDisks = @($env:SystemDrive)
-$showPkgs = @("scoop", "choco")
 $t = if ($blink) { "5" } else { "1" }
 
 
