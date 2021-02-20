@@ -39,6 +39,7 @@
 .EXTERNALSCRIPTDEPENDENCIES
 .RELEASENOTES
 #>
+
 <#
 .SYNOPSIS
     Winfetch - Neofetch for Windows in PowerShell 5+
