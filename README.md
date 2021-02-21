@@ -29,3 +29,7 @@ According to [benchmarks](https://github.com/lptstr/winfetch/wiki/Winfetch-vs-Ne
 
 
 #### More: \[[Dependencies](https://github.com/lptstr/winfetch/wiki/Dependencies)\] \[[Installation](https://github.com/lptstr/winfetch/wiki/Installation)\] \[[Usage](https://github.com/lptstr/winfetch/wiki/Basic-Usage)\]
+
+---
+
+###### _For old systems, use the [legacy branch](https://github.com/lptstr/winfetch/tree/legacy)._
