@@ -705,7 +705,7 @@ foreach ($item in $config) {
                 $output = "$e[40G$output"
             } else {
                 # write image progressively
-                $imgline = "$($img[$writtenLines])".PadRight(35)
+                $imgline = ("$($img[$writtenLines])"  -replace $ansiRegex, "").PadRight(35)
                 $output = " $imgline   $output"
             }
         }
@@ -723,7 +723,8 @@ foreach ($item in $config) {
 if ($stripansi) {
     # write out remaining image lines
     for ($i = $writtenLines; $i -lt $img.Length; $i++) {
-        Write-Output (" $($img[$i])".PadRight(35) -replace $ansiRegex, "")
+        $imgline = ("$($img[$i])"  -replace $ansiRegex, "").PadRight(35)
+        Write-Output " $imgline"
     }
 }
 
