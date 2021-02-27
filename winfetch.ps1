@@ -146,7 +146,7 @@ function get_level_info {
         'bar' { return "$barprefix$(get_percent_bar $percentage)" }
         'textbar' { return "$text $(get_percent_bar $percentage)" }
         'bartext' { return "$barprefix$(get_percent_bar $percentage) $text" }
-        Default { return "$percentage% ($text)" }
+        Default { return "$text ($percentage%)" }
     }
 }
 
