@@ -63,6 +63,14 @@
     Display all built-in info segments.
 .PARAMETER help
     Display this help message.
+.PARAMETER cpustyle
+    Specify how to show information level for CPU usage
+.PARAMETER memorystyle
+    Specify how to show information level for RAM usage
+.PARAMETER diskstyle
+    Specify how to show information level for disks' usage
+.PARAMETER batterystyle
+    Specify how to show information level for battery
 .PARAMETER showdisks
     Configure which disks are shown, use '-showdisks *' to show all.
 .PARAMETER showpkgs
@@ -85,6 +93,10 @@ param(
     [switch][alias('s')]$stripansi,
     [switch][alias('a')]$all,
     [switch][alias('h')]$help,
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$cpustyle = "text",
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$memorystyle = "text",
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$diskstyle = "text",
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$batterystyle = "text",
     [array]$showdisks = @($env:SystemDrive),
     [array]$showpkgs = @("scoop", "choco")
 )
