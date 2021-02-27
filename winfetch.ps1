@@ -191,7 +191,7 @@ $baseConfig = @(
     "theme"
     "cpu"
     "gpu"
-    "process"
+    "cpu_usage"
     "memory"
     "disk"
     "battery"
