@@ -57,8 +57,6 @@
     Use legacy Windows logo.
 .PARAMETER blink
     Make the logo blink.
-.PARAMETER percentagebar
-    Show percentages in a cool bar style.
 .PARAMETER stripansi
     Output without any text effects or colors.
 .PARAMETER all
@@ -84,7 +82,6 @@ param(
     [switch][alias('n')]$noimage,
     [switch][alias('l')]$legacylogo,
     [switch][alias('b')]$blink,
-    [switch][alias('p')]$percentagebar,
     [switch][alias('s')]$stripansi,
     [switch][alias('a')]$all,
     [switch][alias('h')]$help,
@@ -114,7 +111,7 @@ if (-not (Test-Path -Path $configPath)) {
 }
 
 # function to generate percentage bars
-function getpercentbar {
+function get_percent_bar {
     param ([Parameter(Mandatory)][ValidateRange(0, 100)][int]$Percent)
 
     $x = [char]9632
@@ -132,17 +129,18 @@ function getpercentbar {
     return $Bar
 }
 
-function printlevel {
+function get_level_info {
     param (
-        [int]$style,
+        [string]$barprefix,
+        [string]$style,
         [int]$percentage,
         [string]$text
     )
 
     switch ($style) {
-        1 { return "$(getpercentbar $percentage)" }
-        2 { return "$text $(getpercentbar $percentage)" }
-        3 { return "$(getpercentbar $percentage) $text" }
+        'bar' { return "$barprefix$(get_percent_bar $percentage)" }
+        'textbar' { return "$text $(get_percent_bar $percentage)" }
+        'bartext' { return "$barprefix$(get_percent_bar $percentage) $text" }
         Default { return "$percentage% ($text)" }
     }
 }
@@ -510,7 +508,7 @@ function info_cpu_usage {
     $proccount = (Get-Process).Count
     return @{
         title   = "CPU Usage"
-        content = printlevel $cpustyle $loadpercent "$proccount processes"
+        content = get_level_info "" $cpustyle $loadpercent "$proccount processes"
     }
 }
 
@@ -523,7 +521,7 @@ function info_memory {
     $usage = [math]::floor(($used / $total * 100))
     return @{
         title   = "Memory"
-        content = "   $(printlevel $memorystyle $usage "$($used.ToString("#.##")) GiB / $($total.ToString("#.##")) GiB")"
+        content = get_level_info "   " $memorystyle $usage "$($used.ToString("#.##")) GiB / $($total.ToString("#.##")) GiB"
     }
 }
 
@@ -550,7 +548,7 @@ function info_disk {
                 $usage = [math]::floor(($used / $total * 100))
                 [void]$lines.Add(@{
                     title   = "Disk ($($diskInfo.DeviceID))"
-                    content = printlevel $diskstyle $usage "$(to_units $used) / $(to_units $total)"
+                    content = get_level_info "" $diskstyle $usage "$(to_units $used) / $(to_units $total)"
                 })
                 break
             }
@@ -646,7 +644,7 @@ function info_battery {
 
     return @{
         title = "Battery"
-        content = "  $(printlevel $batterystyle $battery.EstimatedChargeRemaining "$status$timeFormatted")"
+        content = get_level_info "  " $batterystyle $battery.EstimatedChargeRemaining "$status$timeFormatted"
     }
 }
 
