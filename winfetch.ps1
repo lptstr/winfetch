@@ -48,7 +48,7 @@
 .PARAMETER image
     Display a pixelated image instead of the usual logo. Imagemagick required.
 .PARAMETER genconf
-    Download a configuration template. Internet connection required.
+    Reset your configuration file to the default.
 .PARAMETER configpath
     Specify a path to a custom config file.
 .PARAMETER noimage
@@ -99,15 +99,8 @@ if (-not $configPath) {
         $configPath = $env:WINFETCH_CONFIG_PATH
     } else {
         $configDir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
-        $configPath = "${configDir}/winfetch/config.ps1"
+        $configPath = "${configDir}\winfetch\config.ps1"
     }
-}
-
-$defaultconfig = 'https://raw.githubusercontent.com/lptstr/winfetch/master/lib/config.ps1'
-
-# ensure configuration directory exists
-if (-not (Test-Path -Path $configPath)) {
-    [void](New-Item -Path $configPath -Force)
 }
 
 # function to generate percentage bars
@@ -155,18 +148,6 @@ if ($help) {
     exit 0
 }
 
-# ===== GENERATE CONFIGURATION =====
-if ($genconf) {
-    if ((Get-Item -Path $configPath).Length -gt 0) {
-        Write-Host 'ERROR: configuration file already exists!' -f red
-        exit 1
-    }
-    Write-Output "INFO: downloading default config to '$configPath'."
-    Invoke-WebRequest -Uri $defaultconfig -OutFile $configPath -UseBasicParsing
-    Write-Output 'INFO: successfully completed download.'
-    exit 0
-}
-
 
 # ===== VARIABLES =====
 $cimSession = New-CimSession
@@ -200,9 +181,103 @@ $baseConfig = @(
     "colorbar"
 )
 
-if ((Get-Item -Path $configPath).Length -gt 0) {
-    $config = . $configPath
+$defaultConfig = @'
+# ===== WINFETCH CONFIGURATION =====
+
+# $image = "~/winfetch.png"
+# $noimage = $true
+
+# Use legacy Windows logo
+# $legacylogo = $true
+
+# Make the logo blink
+# $blink = $true
+
+# Show percentages in a cool bar style
+# $percentagebar = $true
+
+# Display all built-in info segments.
+# $all = $true
+
+# Add a custom info line
+# function info_custom_time {
+#     return @{
+#         title = "Time"
+#         content = (Get-Date)
+#     }
+# }
+
+# Configure which disks are shown
+# $ShowDisks = @("C:", "D:")
+# Show all available disks
+# $ShowDisks = @("*")
+
+# Configure which package managers are shown
+# disabling unused ones will improve speed
+# $ShowPkgs = @("scoop", "choco")
+
+# Configure how to show info for levels
+# 0 is for text only. (Default)
+# 1 is for bar only.
+# 2 is for text + bar.
+# 3 is for bar + text.
+# $cpustyle = 1
+# $memorystyle = 2
+# $diskstyle = 3
+# $batterystyle = 3
+
+
+# Remove the '#' from any of the lines in
+# the following to **enable** their output.
+
+@(
+    "title"
+    "dashes"
+    "os"
+    "computer"
+    "kernel"
+    "motherboard"
+    # "custom_time"  # use custom info line
+    "uptime"
+    "pkgs"
+    "pwsh"
+    "resolution"
+    "terminal"
+    # "theme"
+    "cpu"
+    "gpu"
+    # "cpu_usage"  # takes some time
+    "memory"
+    "disk"
+    # "battery"
+    # "locale"
+    # "local_ip"
+    # "public_ip"
+    "blank"
+    "colorbar"
+)
+
+'@
+
+# generate default config
+if ($genconf -and (Test-Path $configPath)) {
+    $choiceYes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
+        "overwrite your configuration with the default"
+    $choiceNo = New-Object System.Management.Automation.Host.ChoiceDescription "&No", `
+        "do nothing and exit"
+    $result = $Host.UI.PromptForChoice("Resetting your config to default will overwrite it.",
+            "Do you want to continue?", ($choiceYes, $choiceNo), 1)
+    if ($result -eq 0) { Remove-Item -Path $configPath } else { exit 1 }
 }
+
+if (-not (Test-Path $configPath) -or ((Get-Item -Path $configPath).Length -eq 0)) {
+    New-Item -Type File -Path $configPath -Value $defaultConfig -Force | Out-Null
+    Write-Host "INFO: saved default config to '$configPath'."
+    if ($genconf) { exit 0 }
+}
+
+# load config file
+$config = . $configPath
 
 if (-not $config -or $all) {
     $config = $baseConfig
