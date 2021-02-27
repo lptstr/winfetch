@@ -12,6 +12,9 @@
 # Show percentages in a cool bar style
 # $percentagebar = $true
 
+# Display all built-in info segments.
+# $all = $true
+
 # Add a custom info line
 # function info_custom_time {
 #     return @{

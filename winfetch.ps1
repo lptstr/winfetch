@@ -39,6 +39,7 @@
 .EXTERNALSCRIPTDEPENDENCIES
 .RELEASENOTES
 #>
+
 <#
 .SYNOPSIS
     Winfetch - Neofetch for Windows in PowerShell 5+
@@ -48,6 +49,8 @@
     Display a pixelated image instead of the usual logo. Imagemagick required.
 .PARAMETER genconf
     Download a configuration template. Internet connection required.
+.PARAMETER configpath
+    Specify a path to a custom config file.
 .PARAMETER noimage
     Do not display any image or logo; display information only.
 .PARAMETER legacylogo
@@ -58,8 +61,14 @@
     Show percentages in a cool bar style.
 .PARAMETER stripansi
     Output without any text effects or colors.
+.PARAMETER all
+    Display all built-in info segments.
 .PARAMETER help
     Display this help message.
+.PARAMETER showdisks
+    Configure which disks are shown, use '-showdisks *' to show all.
+.PARAMETER showpkgs
+    Configure which package managers are shown, e.g. '-showpkgs scoop,choco'.
 .INPUTS
     System.String
 .OUTPUTS
@@ -71,12 +80,16 @@
 param(
     [string][alias('i')]$image,
     [switch][alias('g')]$genconf,
+    [string][alias('c')]$configpath,
     [switch][alias('n')]$noimage,
     [switch][alias('l')]$legacylogo,
     [switch][alias('b')]$blink,
     [switch][alias('p')]$percentagebar,
     [switch][alias('s')]$stripansi,
-    [switch][alias('h')]$help
+    [switch][alias('a')]$all,
+    [switch][alias('h')]$help,
+    [array]$showdisks = @($env:SystemDrive),
+    [array]$showpkgs = @("scoop", "choco")
 )
 
 $e = [char]0x1B
@@ -84,8 +97,14 @@ $ansiRegex = '[\u001B\u009B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=
 
 $is_pscore = $PSVersionTable.PSEdition.ToString() -eq 'Core'
 
-$configdir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
-$configPath = "${configdir}/winfetch/config.ps1"
+if (-not $configPath) {
+    if ($env:WINFETCH_CONFIG_PATH) {
+        $configPath = $env:WINFETCH_CONFIG_PATH
+    } else {
+        $configDir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
+        $configPath = "${configDir}/winfetch/config.ps1"
+    }
+}
 
 $defaultconfig = 'https://raw.githubusercontent.com/lptstr/winfetch/master/lib/config.ps1'
 
@@ -138,8 +157,6 @@ if ($genconf) {
 
 # ===== VARIABLES =====
 $cimSession = New-CimSession
-$showDisks = @($env:SystemDrive)
-$showPkgs = @("scoop", "choco")
 $t = if ($blink) { "5" } else { "1" }
 
 
@@ -172,8 +189,15 @@ $baseConfig = @(
 
 if ((Get-Item -Path $configPath).Length -gt 0) {
     $config = . $configPath
-} else {
+}
+
+if (-not $config -or $all) {
     $config = $baseConfig
+}
+
+# prevent config from overriding specified parameters
+foreach ($param in $PSBoundParameters.Keys) {
+    Set-Variable $param $PSBoundParameters[$param]
 }
 
 # convert old config style
@@ -725,7 +749,7 @@ foreach ($item in $config) {
                 $output = "$e[40G$output"
             } else {
                 # write image progressively
-                $imgline = "$($img[$writtenLines])".PadRight(35)
+                $imgline = ("$($img[$writtenLines])"  -replace $ansiRegex, "").PadRight(35)
                 $output = " $imgline   $output"
             }
         }
@@ -743,7 +767,8 @@ foreach ($item in $config) {
 if ($stripansi) {
     # write out remaining image lines
     for ($i = $writtenLines; $i -lt $img.Length; $i++) {
-        Write-Output (" $($img[$i])".PadRight(35) -replace $ansiRegex, "")
+        $imgline = ("$($img[$i])"  -replace $ansiRegex, "").PadRight(35)
+        Write-Output " $imgline"
     }
 }
 
