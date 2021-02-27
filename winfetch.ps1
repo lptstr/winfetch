@@ -193,9 +193,6 @@ $defaultConfig = @'
 # Make the logo blink
 # $blink = $true
 
-# Show percentages in a cool bar style
-# $percentagebar = $true
-
 # Display all built-in info segments.
 # $all = $true
 
@@ -217,14 +214,14 @@ $defaultConfig = @'
 # $ShowPkgs = @("scoop", "choco")
 
 # Configure how to show info for levels
-# 0 is for text only. (Default)
-# 1 is for bar only.
-# 2 is for text + bar.
-# 3 is for bar + text.
-# $cpustyle = 1
-# $memorystyle = 2
-# $diskstyle = 3
-# $batterystyle = 3
+# Default is for text only.
+# 'bar' is for bar only.
+# 'textbar' is for text + bar.
+# 'bartext' is for bar + text.
+# $cpustyle = 'bar'
+# $memorystyle = 'textbar'
+# $diskstyle = 'bartext'
+# $batterystyle = 'bartext'
 
 
 # Remove the '#' from any of the lines in
