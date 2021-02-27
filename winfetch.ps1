@@ -132,6 +132,21 @@ function getpercentbar {
     return $Bar
 }
 
+function printlevel {
+    param (
+        [int]$style,
+        [int]$percentage,
+        [string]$text
+    )
+
+    switch ($style) {
+        1 { return "$(getpercentbar $percentage)" }
+        2 { return "$text $(getpercentbar $percentage)" }
+        3 { return "$(getpercentbar $percentage) $text" }
+        Default { return "$percentage% ($text)" }
+    }
+}
+
 # ===== DISPLAY HELP =====
 if ($help) {
     if (Get-Command -Name less -ErrorAction Ignore) {
@@ -495,11 +510,7 @@ function info_cpu_usage {
     $proccount = (Get-Process).Count
     return @{
         title   = "CPU Usage"
-        content = if($percentagebar) {
-            "$(getpercentbar $loadpercent) ($proccount processes)"
-        } else {
-            "$loadpercent% ($proccount processes)"
-        }
+        content = printlevel $cpustyle $loadpercent "$proccount processes"
     }
 }
 
@@ -512,11 +523,7 @@ function info_memory {
     $usage = [math]::floor(($used / $total * 100))
     return @{
         title   = "Memory"
-        content = if($percentagebar) {
-            "   $(getpercentbar $usage) {0:f1} GiB" -f $used
-        } else {
-            "{0:f1} GiB / {1:f1} GiB ({2:f1}%)" -f $used,$total,[string]$usage
-        }
+        content = "   $(printlevel $memorystyle $usage "$($used.ToString("#.##")) GiB / $($total.ToString("#.##")) GiB")"
     }
 }
 
@@ -543,11 +550,7 @@ function info_disk {
                 $usage = [math]::floor(($used / $total * 100))
                 [void]$lines.Add(@{
                     title   = "Disk ($($diskInfo.DeviceID))"
-                    content = if($percentagebar) {
-                        "$(getpercentbar $usage) $(to_units $used)"
-                    } else {
-                        "$(to_units $used) / $(to_units $total) ($usage%)"
-                    }
+                    content = printlevel $diskstyle $usage "$(to_units $used) / $(to_units $total)"
                 })
                 break
             }
@@ -643,11 +646,7 @@ function info_battery {
 
     return @{
         title = "Battery"
-        content = if($percentagebar) {
-            "  $(getpercentbar $battery.EstimatedChargeRemaining) ($status$timeFormatted)"
-        } else {
-            "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
-        }
+        content = "  $(printlevel $batterystyle $battery.EstimatedChargeRemaining "$status$timeFormatted")"
     }
 }
 

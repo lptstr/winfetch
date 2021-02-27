@@ -32,6 +32,15 @@
 # disabling unused ones will improve speed
 # $ShowPkgs = @("scoop", "choco")
 
+# Configure how to show info for levels
+# 0 is for text only. (Default)
+# 1 is for bar only.
+# 2 is for text + bar.
+# 3 is for bar + text.
+# $cpustyle = 1
+# $memorystyle = 2
+# $diskstyle = 3
+# $batterystyle = 3
 
 # Remove the '#' from any of the lines in
 # the following to **enable** their output.
