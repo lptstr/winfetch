@@ -63,6 +63,14 @@
     Display all built-in info segments.
 .PARAMETER help
     Display this help message.
+.PARAMETER cpustyle
+    Specify how to show information level for CPU usage
+.PARAMETER memorystyle
+    Specify how to show information level for RAM usage
+.PARAMETER diskstyle
+    Specify how to show information level for disks' usage
+.PARAMETER batterystyle
+    Specify how to show information level for battery
 .PARAMETER showdisks
     Configure which disks are shown, use '-showdisks *' to show all.
 .PARAMETER showpkgs
@@ -85,6 +93,10 @@ param(
     [switch][alias('s')]$stripansi,
     [switch][alias('a')]$all,
     [switch][alias('h')]$help,
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$cpustyle = "text",
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$memorystyle = "text",
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$diskstyle = "text",
+    [ValidateSet("text", "bar", "textbar", "bartext")][string]$batterystyle = "text",
     [array]$showdisks = @($env:SystemDrive),
     [array]$showpkgs = @("scoop", "choco")
 )
@@ -100,6 +112,41 @@ if (-not $configPath) {
     } else {
         $configDir = $env:XDG_CONFIG_HOME, "${env:USERPROFILE}\.config" | Select-Object -First 1
         $configPath = "${configDir}\winfetch\config.ps1"
+    }
+}
+
+# function to generate percentage bars
+function get_percent_bar {
+    param ([Parameter(Mandatory)][ValidateRange(0, 100)][int]$Percent)
+
+    $x = [char]9632
+    $Bar = $null
+
+    $Bar += "$e[97m[ $e[0m"
+    for ($i = 1; $i -le ($BarValue = ([Math]::Round($Percent / 10))); $i++) {
+        if ($i -le 6) { $Bar += "$e[32m$x$e[0m" }
+        elseif ($i -le 8) { $Bar += "$e[93m$x$e[0m" }
+        else { $Bar += "$e[91m$x$e[0m" }
+    }
+    for ($i = 1; $i -le (10 - $BarValue); $i++) { $Bar += "$e[97m-$e[0m" }
+    $Bar += "$e[97m ]$e[0m"
+
+    return $Bar
+}
+
+function get_level_info {
+    param (
+        [string]$barprefix,
+        [string]$style,
+        [int]$percentage,
+        [string]$text
+    )
+
+    switch ($style) {
+        'bar' { return "$barprefix$(get_percent_bar $percentage)" }
+        'textbar' { return "$text $(get_percent_bar $percentage)" }
+        'bartext' { return "$barprefix$(get_percent_bar $percentage) $text" }
+        Default { return "$text ($percentage%)" }
     }
 }
 
@@ -135,7 +182,7 @@ $baseConfig = @(
     "theme"
     "cpu"
     "gpu"
-    "process"
+    "cpu_usage"
     "memory"
     "disk"
     "battery"
@@ -178,6 +225,16 @@ $defaultConfig = @'
 # disabling unused ones will improve speed
 # $ShowPkgs = @("scoop", "choco")
 
+# Configure how to show info for levels
+# Default is for text only.
+# 'bar' is for bar only.
+# 'textbar' is for text + bar.
+# 'bartext' is for bar + text.
+# $cpustyle = 'bar'
+# $memorystyle = 'textbar'
+# $diskstyle = 'bartext'
+# $batterystyle = 'bartext'
+
 
 # Remove the '#' from any of the lines in
 # the following to **enable** their output.
@@ -198,7 +255,7 @@ $defaultConfig = @'
     # "theme"
     "cpu"
     "gpu"
-    # "process"  # takes some time
+    # "cpu_usage"  # takes some time
     "memory"
     "disk"
     # "battery"
@@ -529,11 +586,13 @@ function info_gpu {
 }
 
 
-# ===== PROCESS =====
-function info_process {
+# ===== CPU USAGE =====
+function info_cpu_usage {
+    $loadpercent = (Get-CimInstance -ClassName Win32_Processor -Property LoadPercentage -CimSession $cimSession).LoadPercentage
+    $proccount = (Get-Process).Count
     return @{
-        title   = "Processes"
-        content = "$((Get-Process).Count) ($((Get-CimInstance -ClassName Win32_Processor -Property LoadPercentage -CimSession $cimSession).LoadPercentage)% load)"
+        title   = "CPU Usage"
+        content = get_level_info "" $cpustyle $loadpercent "$proccount processes"
     }
 }
 
@@ -543,9 +602,10 @@ function info_memory {
     $m = Get-CimInstance -ClassName Win32_OperatingSystem -Property TotalVisibleMemorySize,FreePhysicalMemory -CimSession $cimSession
     $total = $m.TotalVisibleMemorySize / 1mb
     $used = ($m.TotalVisibleMemorySize - $m.FreePhysicalMemory) / 1mb
+    $usage = [math]::floor(($used / $total * 100))
     return @{
         title   = "Memory"
-        content = ("{0:f1} GiB / {1:f1} GiB" -f $used,$total)
+        content = get_level_info "   " $memorystyle $usage "$($used.ToString("#.##")) GiB / $($total.ToString("#.##")) GiB"
     }
 }
 
@@ -556,9 +616,9 @@ function info_disk {
 
     function to_units($value) {
         if ($value -gt 1tb) {
-            return "$([math]::round($value / 1tb, 1))T"
+            return "$([math]::round($value / 1tb, 1)) TiB"
         } else {
-            return "$([math]::floor($value / 1gb))G"
+            return "$([math]::floor($value / 1gb)) GiB"
         }
     }
 
@@ -572,7 +632,7 @@ function info_disk {
                 $usage = [math]::floor(($used / $total * 100))
                 [void]$lines.Add(@{
                     title   = "Disk ($($diskInfo.DeviceID))"
-                    content = "$(to_units $used) / $(to_units $total) ($usage%)"
+                    content = get_level_info "" $diskstyle $usage "$(to_units $used) / $(to_units $total)"
                 })
                 break
             }
@@ -668,7 +728,7 @@ function info_battery {
 
     return @{
         title = "Battery"
-        content = "$($battery.EstimatedChargeRemaining)% ($status$timeFormatted)"
+        content = get_level_info "  " $batterystyle $battery.EstimatedChargeRemaining "$status$timeFormatted"
     }
 }
 
