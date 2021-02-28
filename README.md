@@ -1,4 +1,4 @@
-<h3 align="center"><img alt="logo" src="lib/logo-winfetch.png" width="450px"></h3>
+<h3 align="center"><img alt="logo-wide" src="https://user-images.githubusercontent.com/46838874/109414417-d649f500-79d8-11eb-8525-934ea963a4e3.png" width="450px"></h3>
 
 <br />
 <p align="center">
@@ -9,7 +9,7 @@
 
 <br />
 <p align="center">
-<img alt="Windows Terminal screenshot" src="lib/wt.png" width="600px">
+<img alt="Windows Terminal screenshot" src="https://user-images.githubusercontent.com/46838874/109414247-f75e1600-79d7-11eb-90ea-d28d417b1654.png" width="600px">
 </p>
 <br />
 
@@ -21,7 +21,7 @@ The information by default is displayed alongside your operating system's logo. 
 
 <br />
 <p align="center">
-<img alt="Windows Console screenshot" src="lib/conhost.png" width="600px">
+<img alt="Windows Console screenshot" src="https://user-images.githubusercontent.com/46838874/109414338-620f5180-79d8-11eb-8b73-e360a7913659.png" width="600px">
 </p>
 <br />
 
