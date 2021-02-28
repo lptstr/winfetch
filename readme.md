@@ -2,7 +2,7 @@
 
 System information tool written in Batch.
 
-![xp-screenshot](xp-screenshot.png)
+![xp-screenshot](https://user-images.githubusercontent.com/46838874/109414370-83703d80-79d8-11eb-8bc1-7cece442da11.png)
 
 ```
 Usage: winfetch [/n] [/b] [/?]
