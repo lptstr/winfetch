@@ -211,7 +211,7 @@ $defaultConfig = @'
 # $image = "~/winfetch.png"
 # $noimage = $true
 
-# Use legacy Windows logo
+# Switch the default Windows logo
 # $switchlogo = $true
 
 # Make the logo blink
