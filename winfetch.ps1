@@ -171,10 +171,8 @@ if ($help) {
 
 # ===== VARIABLES =====
 $cimSession = New-CimSession
-$t = if ($blink) { "5" } else { "1" }
 $buildVersion = "$([System.Environment]::OSVersion.Version)"
-if ($buildVersion -like "6.1*") { $legacylogo = $true }
-else { $legacylogo = $false }
+$legacylogo = if ($buildVersion -like "6.1*") { $true } else { $false }
 
 
 # ===== CONFIGURATION =====
@@ -315,6 +313,7 @@ if ($config.GetType() -eq [string]) {
     $config += @("blank", "colorbar")
 }
 
+$t = if ($blink) { "5" } else { "1" }
 if ($switchlogo) { $legacylogo = -not $legacylogo }
 
 # ===== IMAGE =====
