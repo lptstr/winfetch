@@ -175,7 +175,6 @@ $t = if ($blink) { "5" } else { "1" }
 $buildVersion = "$([System.Environment]::OSVersion.Version)"
 if ($buildVersion -like "6.1*") { $legacylogo = $true }
 else { $legacylogo = $false }
-if ($switchlogo) { $legacylogo = -not $legacylogo }
 
 
 # ===== CONFIGURATION =====
@@ -316,6 +315,7 @@ if ($config.GetType() -eq [string]) {
     $config += @("blank", "colorbar")
 }
 
+if ($switchlogo) { $legacylogo = -not $legacylogo }
 
 # ===== IMAGE =====
 $img = if (-not $noimage) {
