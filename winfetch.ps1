@@ -94,21 +94,21 @@ if (-not $configPath) {
 
 # function to generate percentage bars
 function get_percent_bar {
-    param ([Parameter(Mandatory)][ValidateRange(0, 100)][int]$Percent)
+    param ([Parameter(Mandatory)][ValidateRange(0, 100)][int]$percent)
 
     $x = [char]9632
-    $Bar = $null
+    $bar = $null
 
-    $Bar += "$e[97m[ $e[0m"
-    for ($i = 1; $i -le ($BarValue = ([Math]::Round($Percent / 10))); $i++) {
-        if ($i -le 6) { $Bar += "$e[32m$x$e[0m" }
-        elseif ($i -le 8) { $Bar += "$e[93m$x$e[0m" }
-        else { $Bar += "$e[91m$x$e[0m" }
+    $bar += "$e[97m[ $e[0m"
+    for ($i = 1; $i -le ($barValue = ([math]::round($percent / 10))); $i++) {
+        if ($i -le 6) { $bar += "$e[32m$x$e[0m" }
+        elseif ($i -le 8) { $bar += "$e[93m$x$e[0m" }
+        else { $bar += "$e[91m$x$e[0m" }
     }
-    for ($i = 1; $i -le (10 - $BarValue); $i++) { $Bar += "$e[97m-$e[0m" }
-    $Bar += "$e[97m ]$e[0m"
+    for ($i = 1; $i -le (10 - $barValue); $i++) { $bar += "$e[97m-$e[0m" }
+    $bar += "$e[97m ]$e[0m"
 
-    return $Bar
+    return $bar
 }
 
 function get_level_info {
@@ -511,14 +511,14 @@ function info_uptime {
 # ===== RESOLUTION =====
 function info_resolution {
     Add-Type -AssemblyName System.Windows.Forms
-    $Displays = New-Object System.Collections.Generic.List[System.Object];
+    $displays = New-Object System.Collections.Generic.List[System.Object];
     foreach ($monitor in [System.Windows.Forms.Screen]::AllScreens) {
-        $Displays.Add("$($monitor.Bounds.Size.Width)x$($monitor.Bounds.Size.Height)");
+        $displays.Add("$($monitor.Bounds.Size.Width)x$($monitor.Bounds.Size.Height)");
     }
 
     return @{
         title   = "Resolution"
-        content = $Displays -join ' '
+        content = $displays -join ' '
     }
 }
 
