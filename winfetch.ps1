@@ -511,14 +511,13 @@ function info_uptime {
 # ===== RESOLUTION =====
 function info_resolution {
     Add-Type -AssemblyName System.Windows.Forms
-    $displays = New-Object System.Collections.Generic.List[System.Object];
-    foreach ($monitor in [System.Windows.Forms.Screen]::AllScreens) {
-        $displays.Add("$($monitor.Bounds.Size.Width)x$($monitor.Bounds.Size.Height)");
+    $displays = foreach ($monitor in [System.Windows.Forms.Screen]::AllScreens) {
+        "$($monitor.Bounds.Size.Width)x$($monitor.Bounds.Size.Height)"
     }
 
     return @{
         title   = "Resolution"
-        content = $displays -join ' '
+        content = $displays -join ', '
     }
 }
 
