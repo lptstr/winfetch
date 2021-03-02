@@ -116,14 +116,15 @@ function get_level_info {
         [string]$barprefix,
         [string]$style,
         [int]$percentage,
-        [string]$text
+        [string]$text,
+        [switch]$altstyle
     )
 
     switch ($style) {
         'bar' { return "$barprefix$(get_percent_bar $percentage)" }
         'textbar' { return "$text $(get_percent_bar $percentage)" }
         'bartext' { return "$barprefix$(get_percent_bar $percentage) $text" }
-        Default { return "$text ($percentage%)" }
+        default { if ($altstyle) { return "$percentage% ($text)" } else { return "$text ($percentage%)" }}
     }
 }
 
@@ -599,7 +600,7 @@ function info_cpu_usage {
     $proccount = (Get-Process).Count
     return @{
         title   = "CPU Usage"
-        content = get_level_info "" $cpustyle $loadpercent "$proccount processes"
+        content = get_level_info "" $cpustyle $loadpercent "$proccount processes" -altstyle
     }
 }
 
@@ -735,7 +736,7 @@ function info_battery {
 
     return @{
         title = "Battery"
-        content = get_level_info "  " $batterystyle $battery.EstimatedChargeRemaining "$status$timeFormatted"
+        content = get_level_info "  " $batterystyle $battery.EstimatedChargeRemaining "$status$timeFormatted" -altstyle
     }
 }
 
