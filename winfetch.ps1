@@ -30,8 +30,8 @@
     Specify a path to a custom config file.
 .PARAMETER noimage
     Do not display any image or logo; display information only.
-.PARAMETER legacylogo
-    Use legacy Windows logo.
+.PARAMETER switchlogo
+    Switch the default Windows logo.
 .PARAMETER blink
     Make the logo blink.
 .PARAMETER stripansi
@@ -65,7 +65,7 @@ param(
     [switch][alias('g')]$genconf,
     [string][alias('c')]$configpath,
     [switch][alias('n')]$noimage,
-    [switch][alias('l')]$legacylogo,
+    [switch][alias('l')]$switchlogo,
     [switch][alias('b')]$blink,
     [switch][alias('s')]$stripansi,
     [switch][alias('a')]$all,
@@ -172,6 +172,10 @@ if ($help) {
 # ===== VARIABLES =====
 $cimSession = New-CimSession
 $t = if ($blink) { "5" } else { "1" }
+$buildVersion = "$([System.Environment]::OSVersion.Version)"
+if ($buildVersion -like "6.1*") { $legacylogo = $true }
+else { $legacylogo = $false }
+if ($switchlogo) { $legacylogo = -not $legacylogo }
 
 
 # ===== CONFIGURATION =====
@@ -208,7 +212,7 @@ $defaultConfig = @'
 # $noimage = $true
 
 # Use legacy Windows logo
-# $legacylogo = $true
+# $switchlogo = $true
 
 # Make the logo blink
 # $blink = $true
@@ -454,14 +458,14 @@ function info_motherboard {
 function info_title {
     return @{
         title   = ""
-        content = "${e}[1;34m{0}${e}[0m@${e}[1;34m{1}${e}[0m" -f [Environment]::UserName,$env:COMPUTERNAME
+        content = "${e}[1;34m{0}${e}[0m@${e}[1;34m{1}${e}[0m" -f [System.Environment]::UserName,$env:COMPUTERNAME
     }
 }
 
 
 # ===== DASHES =====
 function info_dashes {
-    $length = [Environment]::UserName.Length + $env:COMPUTERNAME.Length + 1
+    $length = [System.Environment]::UserName.Length + $env:COMPUTERNAME.Length + 1
     return @{
         title   = ""
         content = "-" * $length
@@ -483,11 +487,7 @@ function info_computer {
 function info_kernel {
     return @{
         title   = "Kernel"
-        content = if ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5) {
-            "$([System.Environment]::OSVersion.Version)"
-        } else {
-            "$(uname -r)"
-        }
+        content = $buildVersion
     }
 }
 
