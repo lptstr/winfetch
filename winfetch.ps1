@@ -172,7 +172,7 @@ if ($help) {
 # ===== VARIABLES =====
 $cimSession = New-CimSession
 $buildVersion = "$([System.Environment]::OSVersion.Version)"
-$legacylogo = if ($buildVersion -like "6.1*") { $true } else { $false }
+$legacylogo = $buildVersion -like "6.1*"
 
 
 # ===== CONFIGURATION =====
