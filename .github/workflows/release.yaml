@@ -1,0 +1,19 @@
+name: "Publish"
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@main"
+      - name: Publish to PSGallery
+        uses: jcwillox/action-publish-powershell-script@main
+        with:
+          name: lptstr-winfetch
+          path: winfetch.ps1
+          nuget_api_key: ${{ secrets.PSGALLERY_KEY }}
+
