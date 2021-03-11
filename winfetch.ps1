@@ -803,7 +803,7 @@ $freeSpace = $Host.UI.RawUI.WindowSize.Width - 1
 
 # move cursor to top of image and to column 40
 if ($img -and -not $stripansi) {
-    $freeSpace -= 1 + 35 + 3
+    $freeSpace -= 1 + $COLUMNS + 3
     Write-Output "$e[$($img.Length + 1)A"
 }
 
@@ -839,7 +839,7 @@ foreach ($item in $config) {
                 $output = "$e[40G$output"
             } else {
                 # write image progressively
-                $imgline = ("$($img[$writtenLines])"  -replace $ansiRegex, "").PadRight(35)
+                $imgline = ("$($img[$writtenLines])"  -replace $ansiRegex, "").PadRight($COLUMNS)
                 $output = " $imgline   $output"
             }
         }
@@ -862,7 +862,7 @@ foreach ($item in $config) {
 if ($stripansi) {
     # write out remaining image lines
     for ($i = $writtenLines; $i -lt $img.Length; $i++) {
-        $imgline = ("$($img[$i])"  -replace $ansiRegex, "").PadRight(35)
+        $imgline = ("$($img[$i])"  -replace $ansiRegex, "").PadRight($COLUMNS)
         Write-Output " $imgline"
     }
 }
