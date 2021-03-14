@@ -200,6 +200,7 @@ $baseConfig = @(
     "disk"
     "battery"
     "locale"
+    "weather"
     "local_ip"
     "public_ip"
     "blank"
@@ -273,6 +274,7 @@ $defaultConfig = @'
     "disk"
     # "battery"
     # "locale"
+    # "weather"
     # "local_ip"
     # "public_ip"
     "blank"
@@ -753,6 +755,20 @@ function info_locale {
             "$((Get-WinHomeLocation).HomeLocation) - $((Get-WinSystemLocale).DisplayName)"
         } else {
             "$((Get-WinHomeLocation).HomeLocation) - $((Get-WinUserLanguageList)[0].LocalizedName)"
+        }
+    }
+}
+
+
+# ===== WEATHER =====
+function info_weather {
+    return @{
+        title = "Weather"
+        content = try {
+            $weather = Invoke-RestMethod -Uri https://wttr.in/?format=j1
+            "$($weather.current_condition.temp_c)°C - $($weather.current_condition.weatherDesc.value) ($($weather.nearest_area.areaName.value), $($weather.nearest_area.region.value))"
+        } catch {
+            "$e[91m(Network Error)"
         }
     }
 }
