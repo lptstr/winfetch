@@ -757,26 +757,25 @@ function info_locale {
 
 # ===== IP =====
 function info_local_ip {
-    $indexDefault = Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Sort-Object -Property RouteMetric | Select-Object -First 1 | Select-Object -ExpandProperty ifIndex
-    $local_ip = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $indexDefault | Select-Object -ExpandProperty IPAddress
+    $local_ip = (Get-NetIPAddress | Where-Object {$_.AddressState -eq "Preferred" -and $_.ValidLifetime -lt "24:00:00"}).IPAddress
     return @{
         title = "Local IP"
-        content = $local_ip
+        content = if (-not $local_ip) {
+            "$e[91m(Network Error)"
+        } else {
+            $local_ip
+        }
     }
 }
 
 function info_public_ip {
-    try {
-        $public_ip = (Resolve-DnsName -Name myip.opendns.com -Server resolver1.opendns.com).IPAddress
-    } catch {}
-
-    if (-not $public_ip) {
-        $public_ip = Invoke-RestMethod -Uri https://ifconfig.me/ip
-    }
-
     return @{
         title = "Public IP"
-        content = $public_ip
+        content = try {
+            Invoke-RestMethod -Uri https://ifconfig.me/ip
+        } catch {
+            "$e[91m(Network Error)"
+        }
     }
 }
 
