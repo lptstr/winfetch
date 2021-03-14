@@ -1,4 +1,3 @@
-#!/usr/bin/env pwsh
 #requires -version 5
 
 <#PSScriptInfo
@@ -77,6 +76,11 @@ param(
     [array]$showdisks = @($env:SystemDrive),
     [array]$showpkgs = @("scoop", "choco")
 )
+
+if (-not ($IsWindows -or $PSVersionTable.PSVersion.Major -eq 5)) {
+    Write-Error "Only supported on Windows."
+    exit 1
+}
 
 $e = [char]0x1B
 $ansiRegex = '([\u001B\u009B][[\]()#;?]*(?:(?:(?:[a-zA-Z\d]*(?:;[-a-zA-Z\d\/#&.:=?%@~_]*)*)?\u0007)|(?:(?:\d{1,4}(?:;\d{0,4})*)?[\dA-PR-TZcf-ntqry=><~])))'
@@ -290,7 +294,7 @@ if ($genconf -and (Test-Path $configPath)) {
 
 if (-not (Test-Path $configPath) -or ((Get-Item -Path $configPath).Length -eq 0)) {
     New-Item -Type File -Path $configPath -Value $defaultConfig -Force | Out-Null
-    Write-Host "INFO: saved default config to '$configPath'."
+    Write-Host "First run: Saved default config to '$configPath'."
     if ($genconf) { exit 0 }
 }
 
@@ -320,8 +324,7 @@ if ($switchlogo) { $legacylogo = -not $legacylogo }
 $img = if (-not $noimage) {
     if ($image) {
         if (-not (Get-Command -Name magick -ErrorAction Ignore)) {
-            Write-Host 'ERROR: Imagemagick must be installed to print custom images.' -f red
-            Write-Host 'hint: if you have Scoop installed, try `scoop install imagemagick`.' -f yellow
+            Write-Error 'Imagemagick must be installed to print custom images.'
             exit 1
         }
 
@@ -334,7 +337,7 @@ $img = if (-not $noimage) {
             $image = (Get-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper).Wallpaper
         }
         if (-not (Test-Path -path $image)) {
-            Write-Host 'ERROR: Specified image or wallpaper does not exist.' -f red
+            Write-Error 'Specified image or wallpaper does not exist.'
             exit 1
         }
         $pixels = @((magick convert -thumbnail "${COLUMNS}x" $image txt:-).Split("`n"))
